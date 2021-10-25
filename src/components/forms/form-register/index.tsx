@@ -1,6 +1,7 @@
 import { FormEvent, useState } from "react";
 import LPBButton from "../../commons/lpb-button";
 import LPBInput from "../../commons/lpb-input";
+import { AiOutlineLoading } from "react-icons/ai";
 
 export type FormRegisterData = {
     fullName: string;
@@ -11,7 +12,7 @@ export type FormRegisterData = {
 
 interface IProps extends React.HTMLAttributes<HTMLFormElement> {
     onSubmited: (data: FormRegisterData) => void;
-    isLoading?: Boolean;
+    isLoading?: boolean;
 }
 
 const FormRegister = (props: IProps) => {
@@ -20,28 +21,37 @@ const FormRegister = (props: IProps) => {
     const [password, setPassword] = useState("");
     const [passwordConfirmation, setPasswordConfirmation] = useState("");
 
-    const handleSubmit = (e: FormEvent) => {
+    const submit = (e: FormEvent) => {
         e.preventDefault();
         props.onSubmited({ fullName, email, password, passwordConfirmation });
     };
 
     return (
-        <form {...props} onSubmit={handleSubmit} className={`space-y-3 ${props.className}`}>
+        <form {...props} onSubmit={submit} className={`space-y-3 ${props.className}`}>
             <LPBInput
                 type="text"
                 label="Full Name"
                 placeholder="Input Your Full Name"
                 onChange={(e) => setFullName(e.currentTarget.value)}
+                disabled={props.isLoading}
                 required
             />
 
-            <LPBInput type="email" label="Email" placeholder="Input Your Email" onChange={(e) => setEmail(e.currentTarget.value)} required />
+            <LPBInput
+                type="email"
+                label="Email"
+                placeholder="Input Your Email"
+                onChange={(e) => setEmail(e.currentTarget.value)}
+                disabled={props.isLoading}
+                required
+            />
 
             <LPBInput
                 type="password"
                 label="Password"
                 placeholder="Input Your Password"
                 onChange={(e) => setPassword(e.currentTarget.value)}
+                disabled={props.isLoading}
                 required
             />
 
@@ -50,11 +60,12 @@ const FormRegister = (props: IProps) => {
                 label="Confirmation Password"
                 placeholder="Input Again Your Password"
                 onChange={(e) => setPasswordConfirmation(e.currentTarget.value)}
+                disabled={props.isLoading}
                 required
             />
 
-            <LPBButton type="submit" mode="primary">
-                Register
+            <LPBButton type="submit" mode="primary" disabled={props.isLoading}>
+                {props.isLoading ? <AiOutlineLoading className="animate-spin text-2xl" /> : <p>Register</p>}
             </LPBButton>
         </form>
     );

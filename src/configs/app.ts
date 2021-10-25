@@ -1,5 +1,4 @@
 import { initializeApp } from "firebase/app";
-import { getFirestore } from "firebase/firestore";
 import {
     DB_API_KEY,
     DB_APP_ID,
@@ -19,5 +18,3 @@ initializeApp({
     appId: DB_APP_ID,
     measurementId: DB_MEASUREMENT_ID,
 });
-
-export default getFirestore();
