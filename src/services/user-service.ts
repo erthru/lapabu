@@ -3,7 +3,7 @@ import { doc, setDoc, getFirestore, getDoc } from "firebase/firestore";
 import "../configs/app";
 import User from "../models/user";
 
-const USER_COLLECTION_NAME = "users";
+const USERS_COLLECTION_NAME = "users";
 
 export const isLoggedIn = async (): Promise<boolean> => {
     return new Promise((resolve) => {
@@ -16,7 +16,7 @@ export const isLoggedIn = async (): Promise<boolean> => {
 export const register = async (fullName: string, email: string, password: string): Promise<User> => {
     const userCredential = await createUserWithEmailAndPassword(getAuth(), email, password);
 
-    await setDoc(doc(getFirestore(), USER_COLLECTION_NAME, userCredential.user.uid), {
+    await setDoc(doc(getFirestore(), USERS_COLLECTION_NAME, userCredential.user.uid), {
         fullName,
     });
 
@@ -29,7 +29,7 @@ export const register = async (fullName: string, email: string, password: string
 
 export const login = async (email: string, password: string): Promise<User> => {
     const userCredential = await signInWithEmailAndPassword(getAuth(), email, password);
-    const userDoc = await getDoc(doc(getFirestore(), USER_COLLECTION_NAME, userCredential.user.uid));
+    const userDoc = await getDoc(doc(getFirestore(), USERS_COLLECTION_NAME, userCredential.user.uid));
 
     return {
         ...(userDoc.data() as User),
@@ -38,11 +38,15 @@ export const login = async (email: string, password: string): Promise<User> => {
     };
 };
 
-export const profile = async (): Promise<User | null> => {
-    const user = getAuth().currentUser;
+export const getProfile = async (): Promise<User | null> => {
+    const user: any = await new Promise((resolve) => {
+        onAuthStateChanged(getAuth(), (user) => {
+            resolve(user);
+        });
+    });
 
     if (user !== null) {
-        const userDoc = await getDoc(doc(getFirestore(), USER_COLLECTION_NAME, user.uid));
+        const userDoc = await getDoc(doc(getFirestore(), USERS_COLLECTION_NAME, user.uid));
 
         return {
             ...(userDoc.data() as User),

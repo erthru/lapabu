@@ -1,5 +1,5 @@
 import { FormEvent, useState } from "react";
-import { AiOutlineLoading } from "react-icons/ai";
+import LPBSpinner from "../../commons/lpb-spinner";
 import LPBButton from "../../commons/lpb-button";
 import LPBInput from "../../commons/lpb-input";
 
@@ -43,7 +43,7 @@ const FormLogin = (props: IProps) => {
             />
 
             <LPBButton type="submit" mode="primary" disabled={props.isLoading}>
-                {props.isLoading ? <AiOutlineLoading className="animate-spin text-2xl" /> : <p>Login</p>}
+                {props.isLoading ? <LPBSpinner className="text-2xl" /> : <p>Login</p>}
             </LPBButton>
         </form>
     );
