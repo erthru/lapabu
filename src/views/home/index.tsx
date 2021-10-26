@@ -5,7 +5,7 @@ import Hoc from "../../hoc";
 import logoWithTextWhite from "../../assets/images/logo-with-text-white.png";
 import * as userService from "../../services/user-service";
 import { useState } from "react";
-import LPBAkert from "../../components/commons/lpb-alert";
+import LPBAlert from "../../components/commons/lpb-alert";
 import { useHistory } from "react-router";
 
 const Home = () => {
@@ -70,9 +70,9 @@ const Home = () => {
                     <FormLogin className="mt-4" isLoading={isLoginLoading} onSubmited={login} />
 
                     {isLoginFailed && (
-                        <LPBAkert mode="error" className="mt-4">
+                        <LPBAlert mode="error" className="mt-4">
                             Login Failed!, Check Email or Password
-                        </LPBAkert>
+                        </LPBAlert>
                     )}
                 </div>
 
@@ -80,21 +80,21 @@ const Home = () => {
                     <p className="font-semibold text-gray-600 text-2xl">REGISTER</p>
 
                     {isPasswordNotMatch && (
-                        <LPBAkert mode="error" className="mt-4">
+                        <LPBAlert mode="error" className="mt-4">
                             Password not match!
-                        </LPBAkert>
+                        </LPBAlert>
                     )}
 
                     {isPasswordLengthInvalid && (
-                        <LPBAkert mode="error" className="mt-4">
+                        <LPBAlert mode="error" className="mt-4">
                             Password at least 6 characters!
-                        </LPBAkert>
+                        </LPBAlert>
                     )}
 
                     {isEmailAlreadyInUse && (
-                        <LPBAkert mode="error" className="mt-4">
+                        <LPBAlert mode="error" className="mt-4">
                             Email already in use!
-                        </LPBAkert>
+                        </LPBAlert>
                     )}
 
                     <FormRegister className="mt-4" isLoading={isRegisterLoading} onSubmited={register} />
