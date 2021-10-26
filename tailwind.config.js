@@ -4,14 +4,15 @@ module.exports = {
     theme: {
         extend: {
             colors: {
-                primary: {
-                    light: "#f2b9a0",
-                    DEFAULT: "#f19066",
-                    dark: "#f56425",
-                },
+                primary: "#f19066",
                 success: "#10B981",
                 warning: "#FBBF24",
                 error: "#EF4444",
+                peach: {
+                    100: "#f2bfa7",
+                    200: "#f0ad8d",
+                    300: "#f3a683",
+                },
             },
         },
     },

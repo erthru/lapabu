@@ -76,7 +76,7 @@ const Home = () => {
                     )}
                 </div>
 
-                <div className="w-full md:w-1/2 bg-primary-light p-6">
+                <div className="w-full md:w-1/2 bg-peach-200 p-6">
                     <p className="font-semibold text-gray-600 text-2xl">REGISTER</p>
 
                     {isPasswordNotMatch && (
