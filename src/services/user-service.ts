@@ -1,5 +1,5 @@
-import { getAuth, createUserWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
-import { doc, setDoc, getFirestore } from "firebase/firestore";
+import { getAuth, createUserWithEmailAndPassword, onAuthStateChanged, signInWithEmailAndPassword } from "firebase/auth";
+import { doc, setDoc, getFirestore, getDoc } from "firebase/firestore";
 import "../configs/app";
 import User from "../models/user";
 
@@ -25,4 +25,31 @@ export const register = async (fullName: string, email: string, password: string
         fullName,
         email,
     };
+};
+
+export const login = async (email: string, password: string): Promise<User> => {
+    const userCredential = await signInWithEmailAndPassword(getAuth(), email, password);
+    const userDoc = await getDoc(doc(getFirestore(), USER_COLLECTION_NAME, userCredential.user.uid));
+
+    return {
+        ...(userDoc.data() as User),
+        id: userCredential.user.uid,
+        email,
+    };
+};
+
+export const profile = async (): Promise<User | null> => {
+    const user = getAuth().currentUser;
+
+    if (user !== null) {
+        const userDoc = await getDoc(doc(getFirestore(), USER_COLLECTION_NAME, user.uid));
+
+        return {
+            ...(userDoc.data() as User),
+            id: user.uid,
+            email: user.email!!,
+        };
+    }
+
+    return null;
 };

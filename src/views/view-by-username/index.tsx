@@ -1,4 +1,4 @@
-import { APP_NAME } from "../../helpers/environments";
+import { APP_NAME } from "../../helpers/constants";
 import Hoc from "../../hoc";
 
 const ViewBySlug = () => (

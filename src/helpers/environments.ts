@@ -1,4 +1,3 @@
-export const APP_NAME = process.env.REACT_APP_APP_NAME as unknown as string;
 export const DB_API_KEY = process.env.REACT_APP_DB_API_KEY as unknown as string;
 export const DB_AUTH_DOAMIN = process.env.REACT_APP_DB_AUTH_DOAMIN as unknown as string;
 export const DB_PROJECT_ID = process.env.REACT_APP_DB_PROJECT_ID as unknown as string;

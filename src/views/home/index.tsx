@@ -1,6 +1,6 @@
 import FormLogin, { FormLoginData } from "../../components/forms/form-login";
 import FormRegister, { FormRegisterData } from "../../components/forms/form-register";
-import { APP_NAME } from "../../helpers/environments";
+import { APP_NAME } from "../../helpers/constants";
 import Hoc from "../../hoc";
 import logoWithTextWhite from "../../assets/images/logo-with-text-white.png";
 import * as userService from "../../services/user-service";
@@ -13,9 +13,22 @@ const Home = () => {
     const [isPasswordLengthInvalid, setIsPasswordLengthInvalid] = useState(false);
     const [isEmailAlreadyInUse, setIsEmailAlreadyInUse] = useState(false);
     const [isRegisterLoading, setIsRegisterLoading] = useState(false);
+    const [isLoginLoading, setIsLoginLoading] = useState(false);
+    const [isLoginFailed, setIsLoginFailed] = useState(false);
     const history = useHistory();
 
-    const login = async (data: FormLoginData) => {};
+    const login = async (data: FormLoginData) => {
+        try {
+            setIsLoginLoading(true);
+            setIsLoginFailed(false);
+            await userService.login(data.email, data.password);
+            history.push("/build");
+        } catch (error: any) {
+            setIsLoginFailed(error.message.includes("user-not-found") || error.message.includes("wrong-password"));
+        } finally {
+            setIsLoginLoading(false);
+        }
+    };
 
     const register = async (data: FormRegisterData) => {
         try {
@@ -54,7 +67,13 @@ const Home = () => {
             <div className="w-full lg:w-3/4 flex flex-wrap md:flex-nowrap mt-4 md:mt-10">
                 <div className="w-full md:w-1/2 bg-gray-100 p-6">
                     <p className="font-semibold text-gray-600 text-2xl">LOGIN</p>
-                    <FormLogin className="mt-4" onSubmited={login} />
+                    <FormLogin className="mt-4" isLoading={isLoginLoading} onSubmited={login} />
+
+                    {isLoginFailed && (
+                        <LPBAkert mode="error" className="mt-4">
+                            Login Failed!, Check Email or Password
+                        </LPBAkert>
+                    )}
                 </div>
 
                 <div className="w-full md:w-1/2 bg-primary-light p-6">
