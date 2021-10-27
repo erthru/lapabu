@@ -8,7 +8,7 @@ export type FormLoginData = {
     password: string;
 };
 
-interface IProps extends React.HTMLAttributes<HTMLFormElement> {
+interface IProps extends React.HTMLProps<HTMLFormElement> {
     onSubmited: (data: FormLoginData) => void;
     isLoading?: boolean;
 }

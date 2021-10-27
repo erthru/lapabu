@@ -10,7 +10,7 @@ export type FormRegisterData = {
     passwordConfirmation: string;
 };
 
-interface IProps extends React.HTMLAttributes<HTMLFormElement> {
+interface IProps extends React.HTMLProps<HTMLFormElement> {
     onSubmited: (data: FormRegisterData) => void;
     isLoading?: boolean;
 }

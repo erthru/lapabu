@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { Helmet } from "react-helmet";
+import { Helmet, HelmetProvider } from "react-helmet-async";
 import { useHistory } from "react-router";
 import * as userService from "../services/user-service";
 
@@ -24,13 +24,15 @@ const Hoc = (props: IProps) => {
     };
 
     return (
-        <div {...props}>
-            <Helmet>
-                <title>{props.title}</title>
-            </Helmet>
+        <HelmetProvider>
+            <div {...props}>
+                <Helmet>
+                    <title>{props.title}</title>
+                </Helmet>
 
-            {props.children}
-        </div>
+                {props.children}
+            </div>
+        </HelmetProvider>
     );
 };
 
