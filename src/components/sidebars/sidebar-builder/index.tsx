@@ -18,14 +18,19 @@ const SidebarBuilder = (props: IProps) => {
     return (
         <div className="w-96 min-h-screen bg-gray-200 relative p-4">
             {!isAddSectionPreparing &&
+                selectedSection === undefined &&
                 props.sections.map((section) => (
-                    <div className="flex text-gray-700 items-center cursor-pointer w-full bg-gray-300 p-2 font-medium" key={section.id}>
+                    <div
+                        className="flex text-gray-700 items-center cursor-pointer w-full bg-gray-300 p-2 font-medium"
+                        key={section.id}
+                        onClick={() => setSelectedSections(section)}
+                    >
                         <AiOutlineMenu className="cursor-move" />
                         <p className="ml-2">{section.name}</p>
                     </div>
                 ))}
 
-            {!isAddSectionPreparing && (
+            {!isAddSectionPreparing && selectedSection === undefined && (
                 <div
                     className="w-full mt-3 flex text-gray-700 items-center cursor-pointer bg-gray-300 p-2 font-medium"
                     onClick={() => setIsAddSectionPreparing(true)}
@@ -37,9 +42,18 @@ const SidebarBuilder = (props: IProps) => {
 
             {isAddSectionPreparing && (
                 <div className="w-full bg-gray-300 text-gray-700 p-2 flex flex-col">
-                    <div className="flex flex-row w-full items-center">
+                    <div className="flex flex-row w-full items-center font-medium">
                         <AiOutlineArrowLeft className="cursor-pointer" onClick={() => setIsAddSectionPreparing(false)} />
                         <p className="ml-2">Add Section</p>
+                    </div>
+                </div>
+            )}
+
+            {selectedSection !== undefined && (
+                <div className="w-full bg-gray-300 text-gray-700 p-2 flex flex-col">
+                    <div className="flex flex-row w-full items-center font-medium">
+                        <AiOutlineArrowLeft className="cursor-pointer" onClick={() => setSelectedSections(undefined)} />
+                        <p className="ml-2">{selectedSection.name}</p>
                     </div>
                 </div>
             )}
