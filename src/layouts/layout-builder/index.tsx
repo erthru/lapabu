@@ -1,4 +1,4 @@
-import { Switch, Route } from "react-router-dom";
+import { Switch, Route, useHistory } from "react-router-dom";
 import Build from "../../views/build";
 import SidebarBuilder from "../../components/sidebars/sidebar-builder";
 import { useEffect, useState } from "react";
@@ -8,6 +8,8 @@ import * as sectionService from "../../services/section-service";
 
 const LayoutBuilder = () => {
     const [sections, setSections] = useState<[Section]>();
+    const [isLoggingOut, setIsLoggingOut] = useState(false);
+    const history = useHistory();
 
     useEffect(() => {
         getSection();
@@ -19,9 +21,16 @@ const LayoutBuilder = () => {
         setSections(sections);
     };
 
+    const logout = async () => {
+        setIsLoggingOut(true);
+        await userService.logout();
+        setIsLoggingOut(false);
+        history.push("/");
+    };
+
     return (
         <div className="w-full flex">
-            {sections !== undefined && <SidebarBuilder sections={sections} />}
+            {sections !== undefined && <SidebarBuilder onLogout={logout} isLoggingOut={isLoggingOut} sections={sections} />}
 
             <div className="w-full">
                 <Switch>

@@ -1,7 +1,11 @@
 import { AiOutlineLoading } from "react-icons/ai";
 
-const LPBSpinner = (props: React.HTMLProps<HTMLDivElement>) => (
-    <div {...props} className={`text-primary ${props.className}`}>
+interface IProps extends React.HTMLProps<HTMLDivElement> {
+    mode: "primary" | "success" | "warning" | "error" | "white";
+}
+
+const LPBSpinner = (props: IProps) => (
+    <div {...props} className={`text-${props.mode} ${props.className}`}>
         <AiOutlineLoading className="animate-spin" />
     </div>
 );

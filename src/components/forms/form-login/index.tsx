@@ -43,7 +43,7 @@ const FormLogin = (props: IProps) => {
             />
 
             <LPBButton type="submit" mode="primary" disabled={props.isLoading}>
-                {props.isLoading ? <LPBSpinner className="text-2xl" /> : <p>Login</p>}
+                {props.isLoading ? <LPBSpinner mode="white" className="text-2xl" /> : <p>Login</p>}
             </LPBButton>
         </form>
     );

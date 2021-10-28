@@ -1,4 +1,4 @@
-import { getAuth, createUserWithEmailAndPassword, onAuthStateChanged, signInWithEmailAndPassword } from "firebase/auth";
+import { getAuth, createUserWithEmailAndPassword, onAuthStateChanged, signInWithEmailAndPassword, signOut } from "firebase/auth";
 import { doc, setDoc, getFirestore, getDoc } from "firebase/firestore";
 import "../configs/app";
 import User from "../models/user";
@@ -56,4 +56,8 @@ export const getProfile = async (): Promise<User | null> => {
     }
 
     return null;
+};
+
+export const logout = async () => {
+    await signOut(getAuth());
 };

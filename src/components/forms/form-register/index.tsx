@@ -65,7 +65,7 @@ const FormRegister = (props: IProps) => {
             />
 
             <LPBButton type="submit" mode="primary" disabled={props.isLoading}>
-                {props.isLoading ? <LPBSpinner className="text-2xl" /> : <p>Register</p>}
+                {props.isLoading ? <LPBSpinner mode="white" className="text-2xl" /> : <p>Register</p>}
             </LPBButton>
         </form>
     );

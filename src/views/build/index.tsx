@@ -24,7 +24,7 @@ const Build = () => {
         <Hoc title={`Build Lading Page - ${APP_NAME}`} authType="registered" className="flex flex-col w-full">
             {sections === undefined ? (
                 <div className="w-full flex mt-6">
-                    <LPBSpinner className="text-3xl mx-auto" />
+                    <LPBSpinner mode="primary" className="text-3xl mx-auto" />
                 </div>
             ) : (
                 <PageLanding sections={sections} />
