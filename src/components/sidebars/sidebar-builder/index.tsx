@@ -1,23 +1,83 @@
-import { useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import { AiOutlineDesktop, AiOutlineTablet, AiOutlineMobile, AiOutlinePlus, AiOutlineMenu, AiOutlineArrowLeft } from "react-icons/ai";
 import Section from "../../../models/section";
 import LPBButton from "../../commons/lpb-button";
+import LPBInput from "../../commons/lpb-input";
 import LPBSpinner from "../../commons/lpb-spinner";
 
+export type FormAddSectionData = {
+    name: string;
+    height: "auto" | string;
+    justifyContent: "top" | "center" | "bottom";
+    bgColor: string;
+};
+
+export type FormAddSectionWidgetData = {
+    type: "text" | "navigation" | "input" | "textarea" | "image" | "carousel" | "video" | "map";
+    width: "1/3" | "1/2" | "2/3" | "full";
+    position: "left" | "center" | "right";
+    textValue?: string;
+    navigationItems?: [
+        {
+            name: string;
+            url: string;
+        }
+    ];
+    isNavigationWithSearch?: boolean;
+    inputPlaceholder?: string;
+    textAreaPlaceholder?: string;
+    imageUrl?: string;
+    carouselUrls?: [string];
+    videoUrl?: string;
+    mapLocation?: {
+        lat: string;
+        lng: string;
+    };
+    sectionId: string;
+};
+
 interface IProps extends React.HTMLProps<HTMLDivElement> {
-    sections: [Section];
     onLogout: () => void;
-    isLoggingOut?: boolean;
+    onAddSectionSubmited: (data: FormAddSectionData) => void;
 }
 
 const SidebarBuilder = (props: IProps) => {
     const [previewAs, setPreviewAs] = useState<"desktop" | "tablet" | "mobile">("desktop");
     const [selectedSection, setSelectedSections] = useState<Section>();
     const [isAddSectionPreparing, setIsAddSectionPreparing] = useState(false);
+    const [sectionName, setSectionName] = useState("");
+    const [sectionHeight, setSectionHeight] = useState<"auto" | string>("auto");
+    const [sectionJustifyContent, setSectionJustifyContent] = useState<"top" | "center" | "bottom">("top");
+    const [sectionBgColor, setSectionBgColor] = useState("");
+    const [sectionWidgets, setSectionWidgets] = useState<[any]>();
+    const [sectionWidgetType, setSectionWidgetType] = useState<"text" | "navigation" | "input" | "textarea" | "image" | "carousel" | "video" | "map">(
+        "text"
+    );
+    const [sectionWidgetPosition, setSectionWidgetPosition] = useState<"left" | "center" | "right">("left");
+    const [sectionWidgetTextValue, setSectionWidgetTextValue] = useState<string>();
+    const [sectionWidgetNavigationItems, setSectionWidgetNavigationItems] = useState<any>();
+    const [sectionWidgetNavgationItemName, setSectionWidgetNavigationItemName] = useState("");
+    const [sectionWidgetNavigationItemUrl, setSectionWidgetNavigationItemUrl] = useState("");
+    const [isNavigationWithSearch, setIsNavigationWithSearch] = useState<boolean>();
+    const [sectionWidgetInputPlaceholder, setSectionWidgetInputPlaceholder] = useState<string>();
+    const [sectionWidgetImageUrl, setSectionWidgetImageUrl] = useState<string>();
+    const [sectionWidgetMapLocation, setSectionWidgetMapLocation] = useState<{}>();
+    const [sectionWidgetMapLocationLat, setSectionWidgetMapLocationLat] = useState("");
+    const [sectioNWdigetMapLocationLng, setSectionWidgetMapLocationLng] = useState("");
+
+    const addSectionSubmit = (e: FormEvent) => {
+        e.preventDefault();
+        props.onAddSectionSubmited({
+            name: sectionName,
+            height: sectionHeight,
+            justifyContent: sectionJustifyContent,
+            bgColor: sectionBgColor,
+        });
+    };
 
     return (
         <div className="w-96 min-h-screen bg-gray-200 relative p-4">
-            {!isAddSectionPreparing &&
+            {/* {!isAddSectionPreparing &&
                 selectedSection === undefined &&
                 props.sections.map((section) => (
                     <div
@@ -28,7 +88,7 @@ const SidebarBuilder = (props: IProps) => {
                         <AiOutlineMenu className="cursor-move" />
                         <p className="ml-2">{section.name}</p>
                     </div>
-                ))}
+                ))} */}
 
             {!isAddSectionPreparing && selectedSection === undefined && (
                 <div
@@ -46,6 +106,44 @@ const SidebarBuilder = (props: IProps) => {
                         <AiOutlineArrowLeft className="cursor-pointer" onClick={() => setIsAddSectionPreparing(false)} />
                         <p className="ml-2">Add Section</p>
                     </div>
+
+                    <form onSubmit={addSectionSubmit} className="w-full mt-3 space-y-3">
+                        <LPBInput
+                            type="text"
+                            label="Name"
+                            placeholder="Input Section Name"
+                            onChange={(e) => setSectionName(e.currentTarget.value)}
+                            required
+                        />
+
+                        <LPBInput
+                            type="text"
+                            label="Height"
+                            placeholder="Input Section Height (Ex: 200px or Input Auto for Auto Height)"
+                            onChange={(e) => setSectionHeight(e.currentTarget.value)}
+                            required
+                        />
+
+                        <LPBInput
+                            type="text"
+                            label="Justify Content"
+                            placeholder="Will Using Select Here, coomiinnggg"
+                            onChange={(e) => setSectionJustifyContent(e.currentTarget.value as any)}
+                            required
+                        />
+
+                        <LPBInput
+                            type="text"
+                            label="Background Color"
+                            placeholder="Input Section Background Color (ex: #000000)"
+                            onChange={(e) => setSectionBgColor(e.currentTarget.value)}
+                            required
+                        />
+
+                        <LPBButton mode="primary" className="w-full flex items-center">
+                            <p className="mx-auto">Add</p>
+                        </LPBButton>
+                    </form>
                 </div>
             )}
 
@@ -80,7 +178,7 @@ const SidebarBuilder = (props: IProps) => {
                     </div>
 
                     <LPBButton mode="error" className="mt-3 text-sm flex items-center" isOutlined onClick={props.onLogout}>
-                        {props.isLoggingOut ? <LPBSpinner mode="error" className="text-2xl mx-auto" /> : <p className="mx-auto">Logout</p>}
+                        <p className="mx-auto">Logout</p>
                     </LPBButton>
                 </div>
             </div>

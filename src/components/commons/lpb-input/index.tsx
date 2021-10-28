@@ -15,7 +15,7 @@ const LPBInput = (props: IProps) => {
 
             <input
                 {...props}
-                className={`bg-white border border-gray-200 px-2 py-2 w-full mt-1 focus:outline-none focus:border-primary-dark ${props.className}`}
+                className={`bg-white border border-gray-200 px-2 h-10 w-full mt-1 focus:outline-none focus:border-primary-dark ${props.className}`}
                 onFocus={() => setIsInputFocused(true)}
                 onBlur={() => setIsInputFocused(false)}
             />
