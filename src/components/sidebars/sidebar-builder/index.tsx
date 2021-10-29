@@ -1,47 +1,14 @@
-import { FormEvent, useEffect, useState } from "react";
+import React, { FormEvent, useEffect, useState } from "react";
 import { AiOutlineDesktop, AiOutlineTablet, AiOutlineMobile, AiOutlinePlus, AiOutlineMenu, AiOutlineArrowLeft } from "react-icons/ai";
 import Section from "../../../models/section";
 import LPBButton from "../../commons/lpb-button";
 import LPBInput from "../../commons/lpb-input";
 import LPBSpinner from "../../commons/lpb-spinner";
+import * as userService from "../../../services/user-service";
+import * as sectionService from "../../../services/section-service";
+import { useHistory } from "react-router";
 
-export type FormAddSectionData = {
-    name: string;
-    height: "auto" | string;
-    justifyContent: "top" | "center" | "bottom";
-    bgColor: string;
-};
-
-export type FormAddSectionWidgetData = {
-    type: "text" | "navigation" | "input" | "textarea" | "image" | "carousel" | "video" | "map";
-    width: "1/3" | "1/2" | "2/3" | "full";
-    position: "left" | "center" | "right";
-    textValue?: string;
-    navigationItems?: [
-        {
-            name: string;
-            url: string;
-        }
-    ];
-    isNavigationWithSearch?: boolean;
-    inputPlaceholder?: string;
-    textAreaPlaceholder?: string;
-    imageUrl?: string;
-    carouselUrls?: [string];
-    videoUrl?: string;
-    mapLocation?: {
-        lat: string;
-        lng: string;
-    };
-    sectionId: string;
-};
-
-interface IProps extends React.HTMLProps<HTMLDivElement> {
-    onLogout: () => void;
-    onAddSectionSubmited: (data: FormAddSectionData) => void;
-}
-
-const SidebarBuilder = (props: IProps) => {
+const SidebarBuilder = (props: React.HTMLProps<HTMLDivElement>) => {
     const [previewAs, setPreviewAs] = useState<"desktop" | "tablet" | "mobile">("desktop");
     const [selectedSection, setSelectedSections] = useState<Section>();
     const [isAddSectionPreparing, setIsAddSectionPreparing] = useState(false);
@@ -64,31 +31,53 @@ const SidebarBuilder = (props: IProps) => {
     const [sectionWidgetMapLocation, setSectionWidgetMapLocation] = useState<{}>();
     const [sectionWidgetMapLocationLat, setSectionWidgetMapLocationLat] = useState("");
     const [sectioNWdigetMapLocationLng, setSectionWidgetMapLocationLng] = useState("");
+    const [sections, setSections] = useState<[Section]>();
+    const [isLoadingLogout, setIsLoadingLogout] = useState(false);
+    const [isLoadingAdd, setIsLoadingAdd] = useState(false);
+    const history = useHistory();
 
-    const addSectionSubmit = (e: FormEvent) => {
+    useEffect(() => {
+        getSections();
+    }, []);
+
+    const getSections = async () => {
+        const user = await userService.getProfile();
+        const sections = await sectionService.getAllByUserId(user?.id!!);
+        setSections(sections);
+    };
+
+    const add = async (e: FormEvent) => {
         e.preventDefault();
-        props.onAddSectionSubmited({
-            name: sectionName,
-            height: sectionHeight,
-            justifyContent: sectionJustifyContent,
-            bgColor: sectionBgColor,
-        });
+        setIsLoadingAdd(true);
+        const user = await userService.getProfile();
+        await sectionService.add(sectionName, sectionHeight, sectionJustifyContent, sectionBgColor, user?.id!!);
+        setIsLoadingAdd(false);
+        setIsAddSectionPreparing(false);
+    };
+
+    const logout = async () => {
+        setIsLoadingLogout(true);
+        await userService.logout();
+        setIsLoadingLogout(false);
+        history.push("/");
     };
 
     return (
         <div className="w-96 min-h-screen bg-gray-200 relative p-4">
-            {/* {!isAddSectionPreparing &&
-                selectedSection === undefined &&
-                props.sections.map((section) => (
-                    <div
-                        className="flex text-gray-700 items-center cursor-pointer w-full bg-gray-300 p-2 font-medium"
-                        key={section.id}
-                        onClick={() => setSelectedSections(section)}
-                    >
-                        <AiOutlineMenu className="cursor-move" />
-                        <p className="ml-2">{section.name}</p>
-                    </div>
-                ))} */}
+            {!isAddSectionPreparing && selectedSection === undefined && sections !== undefined && (
+                <div className="w-full flex flex-col space-y-3">
+                    {sections.map((section) => (
+                        <div
+                            className="flex text-gray-700 items-center cursor-pointer w-full bg-gray-300 p-2 font-medium"
+                            key={section.id}
+                            onClick={() => setSelectedSections(section)}
+                        >
+                            <AiOutlineMenu className="cursor-move" />
+                            <p className="ml-2">{section.name}</p>
+                        </div>
+                    ))}
+                </div>
+            )}
 
             {!isAddSectionPreparing && selectedSection === undefined && (
                 <div
@@ -107,7 +96,7 @@ const SidebarBuilder = (props: IProps) => {
                         <p className="ml-2">Add Section</p>
                     </div>
 
-                    <form onSubmit={addSectionSubmit} className="w-full mt-3 space-y-3">
+                    <form onSubmit={add} className="w-full mt-3 space-y-3">
                         <LPBInput
                             type="text"
                             label="Name"
@@ -141,7 +130,7 @@ const SidebarBuilder = (props: IProps) => {
                         />
 
                         <LPBButton mode="primary" className="w-full flex items-center">
-                            <p className="mx-auto">Add</p>
+                            {isLoadingAdd ? <LPBSpinner mode="white" className="text-2xl mx-auto" /> : <p className="mx-auto">Add</p>}
                         </LPBButton>
                     </form>
                 </div>
@@ -172,14 +161,10 @@ const SidebarBuilder = (props: IProps) => {
                             onClick={() => setPreviewAs("mobile")}
                         />
 
-                        <LPBButton mode="primary" className="text-sm w-full flex-1" isOutlined>
-                            Save
+                        <LPBButton mode="error" className="flex items-center flex-1" isOutlined onClick={logout}>
+                            {isLoadingLogout ? <LPBSpinner mode="white" className="text-2xl mx-auto" /> : <p className="mx-auto">Logout</p>}
                         </LPBButton>
                     </div>
-
-                    <LPBButton mode="error" className="mt-3 text-sm flex items-center" isOutlined onClick={props.onLogout}>
-                        <p className="mx-auto">Logout</p>
-                    </LPBButton>
                 </div>
             </div>
         </div>

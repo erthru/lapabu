@@ -8,7 +8,7 @@ interface IProps extends React.DetailedHTMLProps<ButtonHTMLAttributes<HTMLButton
 const LPBButton = (props: IProps) => (
     <button
         {...props}
-        className={`px-4 h-10 font-semibold ${props.isOutlined ? `text-${props.mode} border border-${props.mode}` : `text-white bg-${props.mode}`} ${
+        className={`px-4 h-10 text-sm font-semibold ${props.isOutlined ? `text-${props.mode} border border-${props.mode}` : `text-white bg-${props.mode}`} ${
             props.className
         }`}
     >
