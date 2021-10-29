@@ -63,8 +63,8 @@ const SidebarBuilder = (props: React.HTMLProps<HTMLDivElement>) => {
     };
 
     return (
-        <div className="w-96 min-h-screen bg-gray-200 relative p-4">
-            {!isAddSectionPreparing && selectedSection === undefined && sections !== undefined && (
+        <div className="w-96 min-h-screen bg-gray-200 relative p-4 space-y-3">
+            {!isAddSectionPreparing && selectedSection === undefined && sections !== undefined && sections.length > 0 && (
                 <div className="w-full flex flex-col space-y-3">
                     {sections.map((section) => (
                         <div
@@ -81,7 +81,7 @@ const SidebarBuilder = (props: React.HTMLProps<HTMLDivElement>) => {
 
             {!isAddSectionPreparing && selectedSection === undefined && (
                 <div
-                    className="w-full mt-3 flex text-gray-700 items-center cursor-pointer bg-gray-300 p-2 font-medium"
+                    className="w-full flex text-gray-700 items-center cursor-pointer bg-gray-300 p-2 font-medium"
                     onClick={() => setIsAddSectionPreparing(true)}
                 >
                     <AiOutlinePlus />
