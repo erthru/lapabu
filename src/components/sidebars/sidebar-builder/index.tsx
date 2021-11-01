@@ -8,6 +8,7 @@ import LPBSpinner from "../../commons/lpb-spinner";
 import * as userService from "../../../services/user-service";
 import * as sectionService from "../../../services/section-service";
 import { useHistory } from "react-router";
+import LPBSelect from "../../commons/lpb-select";
 
 const SidebarBuilder = (props: React.HTMLProps<HTMLDivElement>) => {
     const [previewAs, setPreviewAs] = useState<"desktop" | "tablet" | "mobile">("desktop");
@@ -66,6 +67,7 @@ const SidebarBuilder = (props: React.HTMLProps<HTMLDivElement>) => {
         await sectionService.add(sectionName, sectionHeight, sectionJustifyContent, sectionBgColor, user?.id!!);
         setIsLoadingAdd(false);
         setIsAddSectionPreparing(false);
+        getSections();
     };
 
     const update = async (e: FormEvent) => {
@@ -136,11 +138,23 @@ const SidebarBuilder = (props: React.HTMLProps<HTMLDivElement>) => {
                             required
                         />
 
-                        <LPBInput
-                            type="text"
+                        <LPBSelect
                             label="Justify Content"
-                            placeholder="Will Using Select Here, coomiinnggg"
-                            onChange={(e) => setSectionJustifyContent(e.currentTarget.value as any)}
+                            items={[
+                                {
+                                    text: "Top",
+                                    value: "top",
+                                },
+                                {
+                                    text: "Center",
+                                    value: "center",
+                                },
+                                {
+                                    text: "Bottom",
+                                    value: "bottom",
+                                },
+                            ]}
+                            selectedValue={(val) => setSectionJustifyContent(val as any)}
                             required
                         />
 
@@ -192,11 +206,23 @@ const SidebarBuilder = (props: React.HTMLProps<HTMLDivElement>) => {
                                 required
                             />
 
-                            <LPBInput
-                                type="text"
+                            <LPBSelect
                                 label="Justify Content"
-                                placeholder="Will Using Select Here, coomiinnggg"
-                                onChange={(e) => setSectionJustifyContent(e.currentTarget.value as any)}
+                                items={[
+                                    {
+                                        text: "Top",
+                                        value: "top",
+                                    },
+                                    {
+                                        text: "Center",
+                                        value: "center",
+                                    },
+                                    {
+                                        text: "Bottom",
+                                        value: "bottom",
+                                    },
+                                ]}
+                                selectedValue={(val) => setSectionJustifyContent(val as any)}
                                 value={sectionJustifyContent}
                                 required
                             />

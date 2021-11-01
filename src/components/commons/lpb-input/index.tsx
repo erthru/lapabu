@@ -9,13 +9,13 @@ const LPBInput = (props: IProps) => {
 
     return (
         <div className="w-full">
-            <p className={`${isInputFocused ? "text-primary-dark" : "text-gray-600"}`} style={{ fontSize: "15px" }}>
+            <p className={`${isInputFocused ? "text-gray-800" : "text-gray-600"}`} style={{ fontSize: "15px" }}>
                 {props.label}
             </p>
 
             <input
                 {...props}
-                className={`bg-white border border-gray-200 px-2 h-10 w-full mt-1 focus:outline-none focus:border-primary-dark ${props.className}`}
+                className={`bg-white border border-gray-200 px-2 h-10 w-full mt-1 focus:outline-none focus:border-gray-400 ${props.className}`}
                 onFocus={() => setIsInputFocused(true)}
                 onBlur={() => setIsInputFocused(false)}
             />
