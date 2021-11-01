@@ -13,7 +13,7 @@ const Hoc = (props: IProps) => {
 
     useEffect(() => {
         checkUserLoggedIn();
-    }, []);
+    }, [props.authType]);
 
     const checkUserLoggedIn = async () => {
         if (props.authType === "guess") {

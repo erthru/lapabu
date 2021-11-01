@@ -1,5 +1,6 @@
 import React, { FormEvent, useEffect, useState } from "react";
-import { AiOutlineDesktop, AiOutlineTablet, AiOutlineMobile, AiOutlinePlus, AiOutlineMenu, AiOutlineArrowLeft } from "react-icons/ai";
+import { AiOutlineDesktop, AiOutlineTablet, AiOutlineMobile, AiOutlinePlus, AiOutlineMenu, AiOutlineArrowLeft, AiOutlineClose } from "react-icons/ai";
+import { HiOutlinePencilAlt } from "react-icons/hi";
 import Section from "../../../models/section";
 import LPBButton from "../../commons/lpb-button";
 import LPBInput from "../../commons/lpb-input";
@@ -10,7 +11,7 @@ import { useHistory } from "react-router";
 
 const SidebarBuilder = (props: React.HTMLProps<HTMLDivElement>) => {
     const [previewAs, setPreviewAs] = useState<"desktop" | "tablet" | "mobile">("desktop");
-    const [selectedSection, setSelectedSections] = useState<Section>();
+    const [selectedSection, setSelectedSection] = useState<Section>();
     const [isAddSectionPreparing, setIsAddSectionPreparing] = useState(false);
     const [sectionName, setSectionName] = useState("");
     const [sectionHeight, setSectionHeight] = useState<"auto" | string>("auto");
@@ -34,11 +35,23 @@ const SidebarBuilder = (props: React.HTMLProps<HTMLDivElement>) => {
     const [sections, setSections] = useState<[Section]>();
     const [isLoadingLogout, setIsLoadingLogout] = useState(false);
     const [isLoadingAdd, setIsLoadingAdd] = useState(false);
+    const [isLoadingUpdate, setIsLoadingUpdate] = useState(false);
+    const [isUpdateSectionShown, setIsUpdateSectionShown] = useState(false);
     const history = useHistory();
 
     useEffect(() => {
         getSections();
     }, []);
+
+    useEffect(() => {
+        if (selectedSection !== undefined) {
+            setSectionName(selectedSection.name);
+            setSectionHeight(selectedSection.height);
+            setSectionJustifyContent(selectedSection.justifyContent);
+            setSectionHeight(selectedSection.height);
+            setSectionBgColor(selectedSection.bgColor);
+        }
+    }, [selectedSection]);
 
     const getSections = async () => {
         const user = await userService.getProfile();
@@ -53,6 +66,16 @@ const SidebarBuilder = (props: React.HTMLProps<HTMLDivElement>) => {
         await sectionService.add(sectionName, sectionHeight, sectionJustifyContent, sectionBgColor, user?.id!!);
         setIsLoadingAdd(false);
         setIsAddSectionPreparing(false);
+    };
+
+    const update = async (e: FormEvent) => {
+        e.preventDefault();
+        setIsLoadingUpdate(true);
+        const updatedSection = await sectionService.update(selectedSection?.id!!, sectionName, sectionHeight, sectionJustifyContent, sectionBgColor);
+        setIsLoadingUpdate(false);
+        setIsUpdateSectionShown(false);
+        setSelectedSection(updatedSection);
+        getSections();
     };
 
     const logout = async () => {
@@ -70,7 +93,7 @@ const SidebarBuilder = (props: React.HTMLProps<HTMLDivElement>) => {
                         <div
                             className="flex text-gray-700 items-center cursor-pointer w-full bg-gray-300 p-2 font-medium"
                             key={section.id}
-                            onClick={() => setSelectedSections(section)}
+                            onClick={() => setSelectedSection(section)}
                         >
                             <AiOutlineMenu className="cursor-move" />
                             <p className="ml-2">{section.name}</p>
@@ -139,9 +162,66 @@ const SidebarBuilder = (props: React.HTMLProps<HTMLDivElement>) => {
             {selectedSection !== undefined && (
                 <div className="w-full bg-gray-300 text-gray-700 p-2 flex flex-col">
                     <div className="flex flex-row w-full items-center font-medium">
-                        <AiOutlineArrowLeft className="cursor-pointer" onClick={() => setSelectedSections(undefined)} />
+                        <AiOutlineArrowLeft className="cursor-pointer" onClick={() => setSelectedSection(undefined)} />
                         <p className="ml-2">{selectedSection.name}</p>
+
+                        {!isUpdateSectionShown ? (
+                            <HiOutlinePencilAlt className="cursor-pointer ml-auto text-xl" onClick={() => setIsUpdateSectionShown(true)} />
+                        ) : (
+                            <AiOutlineClose className="cursor-pointer ml-auto text-xl text-error" onClick={() => setIsUpdateSectionShown(false)} />
+                        )}
                     </div>
+
+                    {isUpdateSectionShown && (
+                        <form onSubmit={update} className="w-full mt-3 space-y-3">
+                            <LPBInput
+                                type="text"
+                                label="Name"
+                                placeholder="Input Section Name"
+                                onChange={(e) => setSectionName(e.currentTarget.value)}
+                                value={sectionName}
+                                required
+                            />
+
+                            <LPBInput
+                                type="text"
+                                label="Height"
+                                placeholder="Input Section Height (Ex: 200px or Input Auto for Auto Height)"
+                                onChange={(e) => setSectionHeight(e.currentTarget.value)}
+                                value={sectionHeight}
+                                required
+                            />
+
+                            <LPBInput
+                                type="text"
+                                label="Justify Content"
+                                placeholder="Will Using Select Here, coomiinnggg"
+                                onChange={(e) => setSectionJustifyContent(e.currentTarget.value as any)}
+                                value={sectionJustifyContent}
+                                required
+                            />
+
+                            <LPBInput
+                                type="text"
+                                label="Background Color"
+                                placeholder="Input Section Background Color (ex: #000000)"
+                                onChange={(e) => setSectionBgColor(e.currentTarget.value)}
+                                value={sectionBgColor}
+                                required
+                            />
+
+                            <LPBButton type="submit" mode="primary" className="w-full flex items-center">
+                                {isLoadingUpdate ? <LPBSpinner mode="white" className="text-2xl mx-auto" /> : <p className="mx-auto">Update</p>}
+                            </LPBButton>
+                        </form>
+                    )}
+
+                    {!isUpdateSectionShown && (
+                        <div className="w-full bg-gray-400 text-gray-800 font-medium p-2 mt-3 flex items-center cursor-pointer">
+                            <AiOutlinePlus />
+                            <p className="ml-2">Add Widget</p>
+                        </div>
+                    )}
                 </div>
             )}
 

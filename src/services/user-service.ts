@@ -20,10 +20,12 @@ export const register = async (fullName: string, email: string, password: string
         fullName,
     });
 
+    const userDoc = await getDoc(doc(getFirestore(), USERS_COLLECTION_NAME, userCredential.user.uid));
+
     return {
+        ...(userDoc.data() as User),
         id: userCredential.user.uid,
-        fullName,
-        email,
+        email: email,
     };
 };
 
