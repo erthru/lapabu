@@ -1,4 +1,4 @@
-import { collection, query, getFirestore, getDocs, where, setDoc, doc, getDoc, addDoc } from "firebase/firestore";
+import { collection, query, getFirestore, getDocs, where, setDoc, doc, getDoc, addDoc, deleteDoc } from "firebase/firestore";
 import Section from "../data/entities/section";
 
 const SECTIONS_COLLECTION_NAME = "sections";
@@ -65,3 +65,5 @@ export const update = async (
         id: updatedSectionDoc.id,
     };
 };
+
+export const remove = async (id: string) => await deleteDoc(doc(getFirestore(), SECTIONS_COLLECTION_NAME, id));
