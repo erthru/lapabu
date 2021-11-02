@@ -23,6 +23,7 @@ const SidebarBuilder = (props: React.HTMLProps<HTMLDivElement>) => {
         "text"
     );
     const [sectionWidgetPosition, setSectionWidgetPosition] = useState<"left" | "center" | "right">("left");
+    const [sectionWidgetWidth, setSectionWidgetWidth] = useState<"1/3" | "1/2" | "2/3" | "full">("1/3");
     const [sectionWidgetTextValue, setSectionWidgetTextValue] = useState<string>();
     const [sectionWidgetNavigationItems, setSectionWidgetNavigationItems] = useState<any>();
     const [sectionWidgetNavgationItemName, setSectionWidgetNavigationItemName] = useState("");

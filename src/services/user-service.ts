@@ -1,9 +1,14 @@
 import { getAuth, createUserWithEmailAndPassword, onAuthStateChanged, signInWithEmailAndPassword, signOut } from "firebase/auth";
 import { doc, setDoc, getFirestore, getDoc } from "firebase/firestore";
 import "../configs/app";
-import User from "../models/user";
 
 const USERS_COLLECTION_NAME = "users";
+
+type User = {
+    id: string;
+    fullName: string;
+    email: string;
+};
 
 export const isLoggedIn = async (): Promise<boolean> => {
     return new Promise((resolve) => {
