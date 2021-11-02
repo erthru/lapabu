@@ -1,8 +1,18 @@
 import React, { FormEvent, useEffect, useState } from "react";
-import { AiOutlineDesktop, AiOutlineTablet, AiOutlineMobile, AiOutlinePlus, AiOutlineMenu, AiOutlineArrowLeft, AiOutlineClose } from "react-icons/ai";
+import {
+    AiOutlineDesktop,
+    AiOutlineTablet,
+    AiOutlineMobile,
+    AiOutlinePlus,
+    AiOutlineMenu,
+    AiOutlineArrowLeft,
+    AiOutlineClose,
+    AiOutlineFontColors,
+    AiOutlineVideoCamera,
+} from "react-icons/ai";
 import { HiOutlinePencilAlt } from "react-icons/hi";
-import { BiTrash } from "react-icons/bi";
-import Section from "../../../data/entities/section";
+import { BiCarousel, BiImage, BiMap, BiNavigation, BiTrash } from "react-icons/bi";
+import Section, { SectionWidget, SectionWidgetNavigationItem } from "../../../data/entities/section";
 import LPBButton from "../../commons/lpb-button";
 import LPBInput from "../../commons/lpb-input";
 import LPBSpinner from "../../commons/lpb-spinner";
@@ -19,23 +29,20 @@ const SidebarBuilder = (props: React.HTMLProps<HTMLDivElement>) => {
     const [sectionHeight, setSectionHeight] = useState<"auto" | string>("auto");
     const [sectionJustifyContent, setSectionJustifyContent] = useState<"top" | "center" | "bottom">("top");
     const [sectionBgColor, setSectionBgColor] = useState("");
-    const [sectionWidgets, setSectionWidgets] = useState<[any]>();
-    const [sectionWidgetType, setSectionWidgetType] = useState<"text" | "navigation" | "input" | "textarea" | "image" | "carousel" | "video" | "map">(
-        "text"
-    );
+    const [sectionWidgets, setSectionWidgets] = useState<SectionWidget[]>();
+    const [sectionWidgetType, setSectionWidgetType] = useState<"text" | "navigation" | "image" | "carousel" | "video" | "map">("text");
     const [sectionWidgetPosition, setSectionWidgetPosition] = useState<"left" | "center" | "right">("left");
     const [sectionWidgetWidth, setSectionWidgetWidth] = useState<"1/3" | "1/2" | "2/3" | "full">("1/3");
     const [sectionWidgetTextValue, setSectionWidgetTextValue] = useState<string>();
-    const [sectionWidgetNavigationItems, setSectionWidgetNavigationItems] = useState<any>();
+    const [sectionWidgetNavigationItems, setSectionWidgetNavigationItems] = useState<SectionWidgetNavigationItem[]>();
     const [sectionWidgetNavgationItemName, setSectionWidgetNavigationItemName] = useState("");
     const [sectionWidgetNavigationItemUrl, setSectionWidgetNavigationItemUrl] = useState("");
     const [isNavigationWithSearch, setIsNavigationWithSearch] = useState<boolean>();
-    const [sectionWidgetInputPlaceholder, setSectionWidgetInputPlaceholder] = useState<string>();
     const [sectionWidgetImageUrl, setSectionWidgetImageUrl] = useState<string>();
     const [sectionWidgetMapLocation, setSectionWidgetMapLocation] = useState<{}>();
     const [sectionWidgetMapLocationLat, setSectionWidgetMapLocationLat] = useState("");
     const [sectioNWdigetMapLocationLng, setSectionWidgetMapLocationLng] = useState("");
-    const [sections, setSections] = useState<[Section]>();
+    const [sections, setSections] = useState<Section[]>();
     const [isLoadingLogout, setIsLoadingLogout] = useState(false);
     const [isLoadingAdd, setIsLoadingAdd] = useState(false);
     const [isLoadingUpdate, setIsLoadingUpdate] = useState(false);
@@ -255,12 +262,28 @@ const SidebarBuilder = (props: React.HTMLProps<HTMLDivElement>) => {
 
                     {!isUpdateSectionShown && (
                         <div className="w-full flex flex-col">
+                            {selectedSection.widgets !== undefined && selectedSection.widgets.length > 0 && (
+                                <div className="mt-3 w-full space-y-3">
+                                    {selectedSection.widgets.map((widget, i) => (
+                                        <div className="w-full flex bg-gray-400 text-gray-800 font-medium p-2 items-center cursor-pointer" key={i}>
+                                            {widget.type === "text" && <AiOutlineFontColors />}
+                                            {widget.type === "carousel" && <BiCarousel />}
+                                            {widget.type === "image" && <BiImage />}
+                                            {widget.type === "map" && <BiMap />}
+                                            {widget.type === "navigation" && <BiNavigation />}
+                                            {widget.type === "video" && <AiOutlineVideoCamera />}
+                                            <p className="ml-2 capitalize">{widget.type}</p>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+
                             <div className="w-full bg-gray-400 text-gray-800 font-medium p-2 mt-3 flex items-center cursor-pointer">
                                 <AiOutlinePlus />
                                 <p className="ml-2">Add Widget</p>
                             </div>
 
-                            <div className="w-full bg-error text-white font-medium p-2 mt-2 flex items-center cursor-pointer" onClick={remove}>
+                            <div className="w-full bg-error text-white font-medium p-2 mt-3 flex items-center cursor-pointer" onClick={remove}>
                                 {isLoadingRemove ? (
                                     <LPBSpinner mode="white" className="text-2xl mx-auto" />
                                 ) : (

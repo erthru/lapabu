@@ -9,14 +9,12 @@ type Section = {
 };
 
 export type SectionWidget = {
-    type: "text" | "navigation" | "input" | "textarea" | "image" | "carousel" | "video" | "map";
+    type: "text" | "navigation" | "image" | "carousel" | "video" | "map";
     width: "1/3" | "1/2" | "2/3" | "full";
     position: "left" | "center" | "right";
     textValue?: string;
     navigationItems?: SectionWidgetNavigationItem[];
     isNavigationWithSearch?: boolean;
-    inputPlaceholder?: string;
-    textAreaPlaceholder?: string;
     imageUrl?: string;
     carouselUrls?: string[];
     videoUrl?: string;
