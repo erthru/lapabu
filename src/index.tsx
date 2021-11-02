@@ -5,6 +5,7 @@ import { BrowserRouter, Switch, Route } from "react-router-dom";
 import "./index.css";
 import LayoutBuilder from "./layouts/layout-builder";
 import LayoutGuess from "./layouts/layout-guess";
+import "./configs/app";
 
 ReactDOM.render(
     <React.StrictMode>

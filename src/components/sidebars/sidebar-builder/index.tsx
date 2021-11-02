@@ -1,7 +1,7 @@
 import React, { FormEvent, useEffect, useState } from "react";
 import { AiOutlineDesktop, AiOutlineTablet, AiOutlineMobile, AiOutlinePlus, AiOutlineMenu, AiOutlineArrowLeft, AiOutlineClose } from "react-icons/ai";
 import { HiOutlinePencilAlt } from "react-icons/hi";
-import Section from "../../../models/section";
+import Section from "../../../data/entities/section";
 import LPBButton from "../../commons/lpb-button";
 import LPBInput from "../../commons/lpb-input";
 import LPBSpinner from "../../commons/lpb-spinner";

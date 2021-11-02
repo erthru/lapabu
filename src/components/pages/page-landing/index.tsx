@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import Section from "../../../models/section";
 import * as userService from "../../../services/user-service";
 import * as sectionService from "../../../services/section-service";
 import LPBSpinner from "../../commons/lpb-spinner";
+import Section from "../../../data/entities/section";
 
 const PageLanding = () => {
     const [sections, setSections] = useState<[Section]>();
