@@ -24,7 +24,7 @@ import LPBSelect from "../../commons/lpb-select";
 const SidebarBuilder = (props: React.HTMLProps<HTMLDivElement>) => {
     const [previewAs, setPreviewAs] = useState<"desktop" | "tablet" | "mobile">("desktop");
     const [selectedSection, setSelectedSection] = useState<Section>();
-    const [isAddSectionPreparing, setIsAddSectionPreparing] = useState(false);
+    const [isAddSectionShown, setIsAddSectionShown] = useState(false);
     const [sectionName, setSectionName] = useState("");
     const [sectionHeight, setSectionHeight] = useState<"auto" | string>("auto");
     const [sectionJustifyContent, setSectionJustifyContent] = useState<"top" | "center" | "bottom">("top");
@@ -44,10 +44,12 @@ const SidebarBuilder = (props: React.HTMLProps<HTMLDivElement>) => {
     const [sectioNWdigetMapLocationLng, setSectionWidgetMapLocationLng] = useState("");
     const [sections, setSections] = useState<Section[]>();
     const [isLoadingLogout, setIsLoadingLogout] = useState(false);
-    const [isLoadingAdd, setIsLoadingAdd] = useState(false);
-    const [isLoadingUpdate, setIsLoadingUpdate] = useState(false);
-    const [isLoadingRemove, setIsLoadingRemove] = useState(false);
+    const [isLoadingAddSection, setIsLoadingAddSection] = useState(false);
+    const [isLoadingUpdateSection, setIsLoadingUpdateSection] = useState(false);
+    const [isLoadingRemoveSection, setIsLoadingRemoveSection] = useState(false);
     const [isUpdateSectionShown, setIsUpdateSectionShown] = useState(false);
+    const [isAddSectionWidgetShown, setIsAddSectionWidgetShown] = useState(false);
+    const [isLoadingAddSectionWidget, setIsLoadingAddSectionWidget] = useState(false);
     const history = useHistory();
 
     useEffect(() => {
@@ -70,32 +72,37 @@ const SidebarBuilder = (props: React.HTMLProps<HTMLDivElement>) => {
         setSections(sections);
     };
 
-    const add = async (e: FormEvent) => {
+    const addSection = async (e: FormEvent) => {
         e.preventDefault();
-        setIsLoadingAdd(true);
+        setIsLoadingAddSection(true);
         const user = await userService.getProfile();
         await sectionService.add(sectionName, sectionHeight, sectionJustifyContent, sectionBgColor, user?.id!!);
-        setIsLoadingAdd(false);
-        setIsAddSectionPreparing(false);
+        setIsLoadingAddSection(false);
+        setIsAddSectionShown(false);
         getSections();
     };
 
-    const update = async (e: FormEvent) => {
+    const updateSection = async (e: FormEvent) => {
         e.preventDefault();
-        setIsLoadingUpdate(true);
+        setIsLoadingUpdateSection(true);
         const updatedSection = await sectionService.update(selectedSection?.id!!, sectionName, sectionHeight, sectionJustifyContent, sectionBgColor);
-        setIsLoadingUpdate(false);
+        setIsLoadingUpdateSection(false);
         setIsUpdateSectionShown(false);
         setSelectedSection(updatedSection);
         getSections();
     };
 
-    const remove = async () => {
-        setIsLoadingRemove(true);
+    const removeSection = async () => {
+        setIsLoadingRemoveSection(true);
         await sectionService.remove(selectedSection?.id!!);
         setSelectedSection(undefined);
         getSections();
-        setIsLoadingRemove(false);
+        setIsLoadingRemoveSection(false);
+    };
+
+    const addSectionWidget = async (e: FormEvent) => {
+        e.preventDefault();
+        setIsLoadingAddSectionWidget(true);
     };
 
     const logout = async () => {
@@ -107,7 +114,7 @@ const SidebarBuilder = (props: React.HTMLProps<HTMLDivElement>) => {
 
     return (
         <div className="w-96 min-h-screen bg-gray-200 relative p-4 space-y-3">
-            {!isAddSectionPreparing && selectedSection === undefined && sections !== undefined && sections.length > 0 && (
+            {!isAddSectionShown && selectedSection === undefined && sections !== undefined && sections.length > 0 && (
                 <div className="w-full flex flex-col space-y-3">
                     {sections.map((section) => (
                         <div
@@ -122,24 +129,24 @@ const SidebarBuilder = (props: React.HTMLProps<HTMLDivElement>) => {
                 </div>
             )}
 
-            {!isAddSectionPreparing && selectedSection === undefined && (
+            {!isAddSectionShown && selectedSection === undefined && (
                 <div
                     className="w-full flex text-gray-700 items-center cursor-pointer bg-gray-300 p-2 font-medium"
-                    onClick={() => setIsAddSectionPreparing(true)}
+                    onClick={() => setIsAddSectionShown(true)}
                 >
                     <AiOutlinePlus />
                     <p className="ml-2">Add Section</p>
                 </div>
             )}
 
-            {isAddSectionPreparing && (
+            {isAddSectionShown && (
                 <div className="w-full bg-gray-300 text-gray-700 p-2 flex flex-col">
                     <div className="flex flex-row w-full items-center font-medium">
-                        <AiOutlineArrowLeft className="cursor-pointer" onClick={() => setIsAddSectionPreparing(false)} />
+                        <AiOutlineArrowLeft className="cursor-pointer" onClick={() => setIsAddSectionShown(false)} />
                         <p className="ml-2">Add Section</p>
                     </div>
 
-                    <form onSubmit={add} className="w-full mt-3 space-y-3">
+                    <form onSubmit={addSection} className="w-full mt-3 space-y-3">
                         <LPBInput
                             type="text"
                             label="Name"
@@ -185,7 +192,7 @@ const SidebarBuilder = (props: React.HTMLProps<HTMLDivElement>) => {
                         />
 
                         <LPBButton mode="primary" className="w-full flex items-center">
-                            {isLoadingAdd ? <LPBSpinner mode="white" className="text-2xl mx-auto" /> : <p className="mx-auto">Add</p>}
+                            {isLoadingAddSection ? <LPBSpinner mode="white" className="text-2xl mx-auto" /> : <p className="mx-auto">Add</p>}
                         </LPBButton>
                     </form>
                 </div>
@@ -197,15 +204,13 @@ const SidebarBuilder = (props: React.HTMLProps<HTMLDivElement>) => {
                         <AiOutlineArrowLeft className="cursor-pointer" onClick={() => setSelectedSection(undefined)} />
                         <p className="ml-2">{selectedSection.name}</p>
 
-                        {!isUpdateSectionShown ? (
+                        {!isUpdateSectionShown && (
                             <HiOutlinePencilAlt className="cursor-pointer ml-auto text-xl" onClick={() => setIsUpdateSectionShown(true)} />
-                        ) : (
-                            <AiOutlineClose className="cursor-pointer ml-auto text-xl text-error" onClick={() => setIsUpdateSectionShown(false)} />
                         )}
                     </div>
 
-                    {isUpdateSectionShown && (
-                        <form onSubmit={update} className="w-full mt-3 space-y-3">
+                    {isUpdateSectionShown ? (
+                        <form onSubmit={updateSection} className="w-full mt-3 space-y-3">
                             <LPBInput
                                 type="text"
                                 label="Name"
@@ -255,14 +260,20 @@ const SidebarBuilder = (props: React.HTMLProps<HTMLDivElement>) => {
                             />
 
                             <LPBButton type="submit" mode="primary" className="w-full flex items-center">
-                                {isLoadingUpdate ? <LPBSpinner mode="white" className="text-2xl mx-auto" /> : <p className="mx-auto">Update</p>}
+                                {isLoadingUpdateSection ? (
+                                    <LPBSpinner mode="white" className="text-2xl mx-auto" />
+                                ) : (
+                                    <p className="mx-auto">Update</p>
+                                )}
+                            </LPBButton>
+
+                            <LPBButton mode="error" className="w-full" onClick={() => setIsUpdateSectionShown(false)}>
+                                Cancel
                             </LPBButton>
                         </form>
-                    )}
-
-                    {!isUpdateSectionShown && (
+                    ) : (
                         <div className="w-full flex flex-col">
-                            {selectedSection.widgets !== undefined && selectedSection.widgets.length > 0 && (
+                            {!isAddSectionWidgetShown && selectedSection.widgets !== undefined && selectedSection.widgets.length > 0 && (
                                 <div className="mt-3 w-full space-y-3">
                                     {selectedSection.widgets.map((widget, i) => (
                                         <div className="w-full flex bg-gray-400 text-gray-800 font-medium p-2 items-center cursor-pointer" key={i}>
@@ -278,21 +289,45 @@ const SidebarBuilder = (props: React.HTMLProps<HTMLDivElement>) => {
                                 </div>
                             )}
 
-                            <div className="w-full bg-gray-400 text-gray-800 font-medium p-2 mt-3 flex items-center cursor-pointer">
-                                <AiOutlinePlus />
-                                <p className="ml-2">Add Widget</p>
-                            </div>
+                            {isAddSectionWidgetShown ? (
+                                <form onSubmit={addSectionWidget} className="mt-3 w-full space-y-3">
+                                    <LPBButton type="submit" mode="primary" className="w-full flex items-center">
+                                        {isLoadingAddSectionWidget ? (
+                                            <LPBSpinner mode="white" className="text-2xl mx-auto" />
+                                        ) : (
+                                            <p className="mx-auto">Add</p>
+                                        )}
+                                    </LPBButton>
 
-                            <div className="w-full bg-error text-white font-medium p-2 mt-3 flex items-center cursor-pointer" onClick={remove}>
-                                {isLoadingRemove ? (
-                                    <LPBSpinner mode="white" className="text-2xl mx-auto" />
-                                ) : (
-                                    <div className="w-full flex items-center">
-                                        <BiTrash className="text-lg" />
-                                        <p className="ml-2">Delete This Section</p>
+                                    <LPBButton mode="error" className="w-full" onClick={() => setIsAddSectionWidgetShown(false)}>
+                                        Cancel
+                                    </LPBButton>
+                                </form>
+                            ) : (
+                                <div className="w-full mt-3">
+                                    <div
+                                        className="w-full bg-gray-400 text-gray-800 font-medium p-2 flex items-center cursor-pointer"
+                                        onClick={() => setIsAddSectionWidgetShown(true)}
+                                    >
+                                        <AiOutlinePlus />
+                                        <p className="ml-2">Add Widget</p>
                                     </div>
-                                )}
-                            </div>
+
+                                    <div
+                                        className="w-full bg-error text-white font-medium p-2 mt-3 flex items-center cursor-pointer"
+                                        onClick={removeSection}
+                                    >
+                                        {isLoadingRemoveSection ? (
+                                            <LPBSpinner mode="white" className="text-2xl mx-auto" />
+                                        ) : (
+                                            <div className="w-full flex items-center">
+                                                <BiTrash className="text-lg" />
+                                                <p className="ml-2">Delete This Section</p>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            )}
                         </div>
                     )}
                 </div>
