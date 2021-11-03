@@ -50,6 +50,7 @@ const SidebarBuilder = (props: React.HTMLProps<HTMLDivElement>) => {
     const [isUpdateSectionShown, setIsUpdateSectionShown] = useState(false);
     const [isAddSectionWidgetShown, setIsAddSectionWidgetShown] = useState(false);
     const [isLoadingAddSectionWidget, setIsLoadingAddSectionWidget] = useState(false);
+    const [userId, setUserId] = useState("");
     const history = useHistory();
 
     useEffect(() => {
@@ -68,6 +69,7 @@ const SidebarBuilder = (props: React.HTMLProps<HTMLDivElement>) => {
 
     const getSections = async () => {
         const user = await userService.getProfile();
+        setUserId(user?.id!!);
         const sections = await sectionService.getAllByUserId(user?.id!!);
         setSections(sections);
     };
@@ -349,10 +351,16 @@ const SidebarBuilder = (props: React.HTMLProps<HTMLDivElement>) => {
                             onClick={() => setPreviewAs("mobile")}
                         />
 
-                        <LPBButton mode="error" className="flex items-center flex-1" isOutlined onClick={logout}>
-                            {isLoadingLogout ? <LPBSpinner mode="white" className="text-2xl mx-auto" /> : <p className="mx-auto">Logout</p>}
+                        <LPBButton mode="primary" className="flex flex-1" isOutlined>
+                            <a href={`/v/${userId}`} target="_blank" className="mx-auto py-2 w-full h-full">
+                                View
+                            </a>
                         </LPBButton>
                     </div>
+
+                    <LPBButton mode="error" className="flex items-center mt-3" isOutlined onClick={logout}>
+                        {isLoadingLogout ? <LPBSpinner mode="white" className="text-2xl mx-auto" /> : <p className="mx-auto">Logout</p>}
+                    </LPBButton>
                 </div>
             </div>
         </div>

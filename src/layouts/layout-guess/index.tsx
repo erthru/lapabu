@@ -4,7 +4,7 @@ import ViewByUserId from "../../views/view-by-user-id";
 
 const LayoutGuess = () => (
     <Switch>
-        <Route path="/v/:email" component={ViewByUserId} />
+        <Route path="/v/:userId" component={ViewByUserId} />
         <Route path="/" component={Home} />
     </Switch>
 );
