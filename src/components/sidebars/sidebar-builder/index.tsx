@@ -127,6 +127,9 @@ const SidebarBuilder = (props: React.HTMLProps<HTMLDivElement>) => {
         }
     };
 
+    const removeSectionWidgetNavigationItem = (item: SectionWidgetNavigationItem) =>
+        setSectionWidgetNavigationItems(sectionWidgetNavigationItems?.filter((_item) => _item !== item));
+
     const logout = async () => {
         setIsLoadingLogout(true);
         await userService.logout();
@@ -429,7 +432,11 @@ const SidebarBuilder = (props: React.HTMLProps<HTMLDivElement>) => {
                                                     sectionWidgetNavigationItems.map((item, i) => (
                                                         <div className="bg-gray-400 text-white p-2 w-full flex items-center">
                                                             <p className="text-center pl-4 w-full">{item.name}</p>
-                                                            <AiOutlineClose className="ml-auto text-lg text-error" />
+
+                                                            <AiOutlineClose
+                                                                className="ml-auto text-lg text-error cursor-pointer"
+                                                                onClick={() => removeSectionWidgetNavigationItem(item)}
+                                                            />
                                                         </div>
                                                     ))}
                                             </div>
