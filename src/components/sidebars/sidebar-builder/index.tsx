@@ -6,9 +6,9 @@ import {
     AiOutlinePlus,
     AiOutlineMenu,
     AiOutlineArrowLeft,
-    AiOutlineClose,
     AiOutlineFontColors,
     AiOutlineVideoCamera,
+    AiOutlineClose,
 } from "react-icons/ai";
 import { HiOutlinePencilAlt } from "react-icons/hi";
 import { BiCarousel, BiImage, BiMap, BiNavigation, BiTrash } from "react-icons/bi";
@@ -20,6 +20,7 @@ import * as userService from "../../../services/user-service";
 import * as sectionService from "../../../services/section-service";
 import { useHistory } from "react-router";
 import LPBSelect from "../../commons/lpb-select";
+import LPBAlert from "../../commons/lpb-alert";
 
 const SidebarBuilder = (props: React.HTMLProps<HTMLDivElement>) => {
     const [previewAs, setPreviewAs] = useState<"desktop" | "tablet" | "mobile">("desktop");
@@ -35,13 +36,14 @@ const SidebarBuilder = (props: React.HTMLProps<HTMLDivElement>) => {
     const [sectionWidgetWidth, setSectionWidgetWidth] = useState<"1/3" | "1/2" | "2/3" | "full">("1/3");
     const [sectionWidgetTextValue, setSectionWidgetTextValue] = useState<string>();
     const [sectionWidgetNavigationItems, setSectionWidgetNavigationItems] = useState<SectionWidgetNavigationItem[]>();
-    const [sectionWidgetNavgationItemName, setSectionWidgetNavigationItemName] = useState("");
+    const [sectionWidgetNavigationItemName, setSectionWidgetNavigationItemName] = useState("");
     const [sectionWidgetNavigationItemUrl, setSectionWidgetNavigationItemUrl] = useState("");
     const [isNavigationWithSearch, setIsNavigationWithSearch] = useState<boolean>();
     const [sectionWidgetImageUrl, setSectionWidgetImageUrl] = useState<string>();
     const [sectionWidgetMapLocation, setSectionWidgetMapLocation] = useState<{}>();
     const [sectionWidgetMapLocationLat, setSectionWidgetMapLocationLat] = useState("");
     const [sectioNWdigetMapLocationLng, setSectionWidgetMapLocationLng] = useState("");
+    const [isSectionWidgetNavigationItemFieldEmpty, setIsSectionWidgetNavigationItemFieldEmpty] = useState(false);
     const [sections, setSections] = useState<Section[]>();
     const [isLoadingLogout, setIsLoadingLogout] = useState(false);
     const [isLoadingAddSection, setIsLoadingAddSection] = useState(false);
@@ -105,6 +107,24 @@ const SidebarBuilder = (props: React.HTMLProps<HTMLDivElement>) => {
     const addSectionWidget = async (e: FormEvent) => {
         e.preventDefault();
         setIsLoadingAddSectionWidget(true);
+    };
+
+    const addSectionWidgetNavigationItems = () => {
+        setIsSectionWidgetNavigationItemFieldEmpty(false);
+
+        if (sectionWidgetNavigationItemName === "" || sectionWidgetNavigationItemUrl === "") setIsSectionWidgetNavigationItemFieldEmpty(true);
+        else {
+            const sectionWidgetNavigationItemsTemp = sectionWidgetNavigationItems !== undefined ? [...sectionWidgetNavigationItems] : [];
+
+            sectionWidgetNavigationItemsTemp.push({
+                name: sectionWidgetNavigationItemName,
+                url: sectionWidgetNavigationItemUrl,
+            });
+
+            setSectionWidgetNavigationItems(sectionWidgetNavigationItemsTemp);
+            setSectionWidgetNavigationItemName("");
+            setSectionWidgetNavigationItemUrl("");
+        }
     };
 
     const logout = async () => {
@@ -203,8 +223,11 @@ const SidebarBuilder = (props: React.HTMLProps<HTMLDivElement>) => {
             {selectedSection !== undefined && (
                 <div className="w-full bg-gray-300 text-gray-700 p-2 flex flex-col">
                     <div className="flex flex-row w-full items-center font-medium">
-                        <AiOutlineArrowLeft className="cursor-pointer" onClick={() => setSelectedSection(undefined)} />
-                        <p className="ml-2">{selectedSection.name}</p>
+                        {!isAddSectionWidgetShown && !isUpdateSectionShown && (
+                            <AiOutlineArrowLeft className="cursor-pointer" onClick={() => setSelectedSection(undefined)} />
+                        )}
+
+                        <p className={`${!isAddSectionWidgetShown && !isUpdateSectionShown && "ml-2"}`}>{selectedSection.name}</p>
 
                         {!isUpdateSectionShown && (
                             <HiOutlinePencilAlt className="cursor-pointer ml-auto text-xl" onClick={() => setIsUpdateSectionShown(true)} />
@@ -293,6 +316,126 @@ const SidebarBuilder = (props: React.HTMLProps<HTMLDivElement>) => {
 
                             {isAddSectionWidgetShown ? (
                                 <form onSubmit={addSectionWidget} className="mt-3 w-full space-y-3">
+                                    <LPBSelect
+                                        label="Type"
+                                        items={[
+                                            {
+                                                text: "Text",
+                                                value: "text",
+                                            },
+                                            {
+                                                text: "Navigation",
+                                                value: "navigation",
+                                            },
+                                            {
+                                                text: "Image",
+                                                value: "image",
+                                            },
+                                            {
+                                                text: "Carousel",
+                                                value: "carousel",
+                                            },
+                                            {
+                                                text: "Video",
+                                                value: "video",
+                                            },
+                                            {
+                                                text: "Map",
+                                                value: "map",
+                                            },
+                                        ]}
+                                        selectedValue={(val) => setSectionWidgetType(val as any)}
+                                        required
+                                    />
+                                    <LPBSelect
+                                        label="Position"
+                                        items={[
+                                            {
+                                                text: "Left",
+                                                value: "left",
+                                            },
+                                            {
+                                                text: "Center",
+                                                value: "center",
+                                            },
+                                            {
+                                                text: "Right",
+                                                value: "right",
+                                            },
+                                        ]}
+                                        selectedValue={(val) => setSectionWidgetPosition(val as any)}
+                                        required
+                                    />
+                                    <LPBSelect
+                                        label="Width"
+                                        items={[
+                                            {
+                                                text: "1/3",
+                                                value: "1/3",
+                                            },
+                                            {
+                                                text: "1/2",
+                                                value: "1/2",
+                                            },
+                                            {
+                                                text: "2/3",
+                                                value: "2/3",
+                                            },
+                                            {
+                                                text: "Full",
+                                                value: "full",
+                                            },
+                                        ]}
+                                        selectedValue={(val) => setSectionWidgetWidth(val as any)}
+                                        required
+                                    />
+
+                                    {sectionWidgetType === "text" && (
+                                        <LPBInput
+                                            label="Text Value"
+                                            placeholder="Input Text Value"
+                                            onChange={(e) => setSectionWidgetTextValue(e.currentTarget.value)}
+                                            required
+                                        />
+                                    )}
+
+                                    {sectionWidgetType === "navigation" && (
+                                        <div className="w-full space-y-3">
+                                            <LPBInput
+                                                label="Navigation Name"
+                                                placeholder="Input Navigation Name"
+                                                value={sectionWidgetNavigationItemName}
+                                                onChange={(e) => setSectionWidgetNavigationItemName(e.currentTarget.value)}
+                                            />
+
+                                            <LPBInput
+                                                label="Navigation URL"
+                                                placeholder="Input Navigation URL"
+                                                value={sectionWidgetNavigationItemUrl}
+                                                onChange={(e) => setSectionWidgetNavigationItemUrl(e.currentTarget.value)}
+                                            />
+
+                                            {isSectionWidgetNavigationItemFieldEmpty && (
+                                                <LPBAlert mode="error">Navigation Item Cannot be Empty</LPBAlert>
+                                            )}
+
+                                            <LPBButton type="button" mode="primary" className="w-full" onClick={addSectionWidgetNavigationItems}>
+                                                Add Navigation Item
+                                            </LPBButton>
+
+                                            <div className="w-full space-y-3">
+                                                {sectionWidgetNavigationItems !== undefined &&
+                                                    sectionWidgetNavigationItems.length > 0 &&
+                                                    sectionWidgetNavigationItems.map((item, i) => (
+                                                        <div className="bg-gray-400 text-white p-2 w-full flex items-center">
+                                                            <p className="text-center pl-4 w-full">{item.name}</p>
+                                                            <AiOutlineClose className="ml-auto text-lg text-error" />
+                                                        </div>
+                                                    ))}
+                                            </div>
+                                        </div>
+                                    )}
+
                                     <LPBButton type="submit" mode="primary" className="w-full flex items-center">
                                         {isLoadingAddSectionWidget ? (
                                             <LPBSpinner mode="white" className="text-2xl mx-auto" />
