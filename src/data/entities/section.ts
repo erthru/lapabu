@@ -5,6 +5,7 @@ type Section = {
     justifyContent: "top" | "center" | "bottom";
     bgColor: string;
     widgets: SectionWidget[];
+    queueNumber: number;
     userId: string;
 };
 

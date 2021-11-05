@@ -1,11 +1,11 @@
-import { collection, query, getFirestore, getDocs, where, setDoc, doc, getDoc, addDoc, deleteDoc } from "firebase/firestore";
+import { collection, query, getFirestore, getDocs, where, setDoc, doc, getDoc, addDoc, deleteDoc, orderBy, limit } from "firebase/firestore";
 import Section from "../data/entities/section";
 
 const SECTIONS_COLLECTION_NAME = "sections";
 
 export const getAllByUserId = async (userId: string): Promise<[Section]> => {
     const sections: any = [];
-    const q = query(collection(getFirestore(), SECTIONS_COLLECTION_NAME), where("userId", "==", userId));
+    const q = query(collection(getFirestore(), SECTIONS_COLLECTION_NAME), where("userId", "==", userId), orderBy("queueNumber", "asc"));
     const sectionQuerySnapshots = await getDocs(q);
 
     sectionQuerySnapshots.forEach((doc) => {
@@ -25,11 +25,17 @@ export const add = async (
     bgColor: string,
     userId: string
 ): Promise<Section> => {
+    let lastNumber = 0;
+    const q = query(collection(getFirestore(), SECTIONS_COLLECTION_NAME), where("userId", "==", userId), orderBy("queueNumber", "desc"), limit(1));
+    const currentLastQueueNumberDocs = await getDocs(q);
+    currentLastQueueNumberDocs.forEach((doc) => (lastNumber = parseInt(doc.data().queueNumber) + 1));
+
     const sectionDoc = await addDoc(collection(getFirestore(), SECTIONS_COLLECTION_NAME), {
         name,
         height,
         justifyContent,
         bgColor,
+        queueNumber: lastNumber,
         userId,
     });
 
