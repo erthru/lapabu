@@ -56,6 +56,7 @@ const SidebarBuilder = (props: React.HTMLProps<HTMLDivElement>) => {
     const [isLoadingUpdateSectionWidget, setIsLoadingUpdateSectionWidget] = useState(false);
     const [isUpdateSectionWidgetShown, setIsUpdateSectionWidgetShown] = useState(false);
     const [selectedSectionWidget, setSelectedSectionWidget] = useState<SectionWidget>();
+    const [isLoadingRemoveSectionWidget, setIsLoadingRemoveSectionWidget] = useState(false);
     const [userId, setUserId] = useState("");
     const history = useHistory();
 
@@ -130,16 +131,7 @@ const SidebarBuilder = (props: React.HTMLProps<HTMLDivElement>) => {
 
     const addSectionWidgetPrepare = () => {
         setIsAddSectionWidgetShown(true);
-        setSectionWidgetType("text");
-        setSectionWidgetWidth("1/3");
-        setSectionWidgetPosition("left");
-        setSectionWidgetTextValue(undefined);
-        setSectionWidgetNavigationItems(undefined);
-        setSectionWidgetImageUrl(undefined);
-        setSectionWidgetCarouselUrls(undefined);
-        setSectionWidgetVideoUrl(undefined);
-        setSectionWidgetMapLocationLat(undefined);
-        setSectionWidgetMapLocationLng(undefined);
+        resetSectionWidgetForm();
     };
 
     const addSectionWidget = async (e: FormEvent) => {
@@ -166,16 +158,7 @@ const SidebarBuilder = (props: React.HTMLProps<HTMLDivElement>) => {
         setIsAddSectionWidgetShown(false);
         setSelectedSection(updatedSection);
         getSections();
-        setSectionWidgetType("text");
-        setSectionWidgetWidth("1/3");
-        setSectionWidgetPosition("left");
-        setSectionWidgetTextValue(undefined);
-        setSectionWidgetNavigationItems(undefined);
-        setSectionWidgetImageUrl(undefined);
-        setSectionWidgetCarouselUrls(undefined);
-        setSectionWidgetVideoUrl(undefined);
-        setSectionWidgetMapLocationLat(undefined);
-        setSectionWidgetMapLocationLng(undefined);
+        resetSectionWidgetForm();
     };
 
     const updateSectionWidget = async (e: FormEvent) => {
@@ -203,16 +186,17 @@ const SidebarBuilder = (props: React.HTMLProps<HTMLDivElement>) => {
         setIsUpdateSectionWidgetShown(false);
         setSelectedSection(updatedSection);
         getSections();
-        setSectionWidgetType("text");
-        setSectionWidgetWidth("1/3");
-        setSectionWidgetPosition("left");
-        setSectionWidgetTextValue(undefined);
-        setSectionWidgetNavigationItems(undefined);
-        setSectionWidgetImageUrl(undefined);
-        setSectionWidgetCarouselUrls(undefined);
-        setSectionWidgetVideoUrl(undefined);
-        setSectionWidgetMapLocationLat(undefined);
-        setSectionWidgetMapLocationLng(undefined);
+        resetSectionWidgetForm();
+    };
+
+    const removeSectionWidget = async () => {
+        setIsLoadingRemoveSectionWidget(true);
+        const updatedSection = await sectionService.removeWidget(selectedSectionWidget?.code!!, selectedSection?.id!!);
+        setIsLoadingRemoveSectionWidget(false);
+        setIsUpdateSectionWidgetShown(false);
+        setSelectedSection(updatedSection);
+        getSections();
+        resetSectionWidgetForm();
     };
 
     const addSectionWidgetNavigationItems = () => {
@@ -254,6 +238,19 @@ const SidebarBuilder = (props: React.HTMLProps<HTMLDivElement>) => {
     const showSelectedSectionWidget = (sectionWidget: SectionWidget) => {
         setIsUpdateSectionWidgetShown(true);
         setSelectedSectionWidget(sectionWidget);
+    };
+
+    const resetSectionWidgetForm = () => {
+        setSectionWidgetType("text");
+        setSectionWidgetWidth("1/3");
+        setSectionWidgetPosition("left");
+        setSectionWidgetTextValue(undefined);
+        setSectionWidgetNavigationItems(undefined);
+        setSectionWidgetImageUrl(undefined);
+        setSectionWidgetCarouselUrls(undefined);
+        setSectionWidgetVideoUrl(undefined);
+        setSectionWidgetMapLocationLat(undefined);
+        setSectionWidgetMapLocationLng(undefined);
     };
 
     const logout = async () => {
@@ -882,15 +879,17 @@ const SidebarBuilder = (props: React.HTMLProps<HTMLDivElement>) => {
                                             </div>
                                         )}
 
-                                        <LPBButton type="submit" mode="primary" className="w-full flex items-center">
-                                            {isLoadingUpdateSectionWidget ? (
-                                                <LPBSpinner mode="white" className="text-2xl mx-auto" />
-                                            ) : (
-                                                <p className="mx-auto">Update</p>
-                                            )}
-                                        </LPBButton>
+                                        {!isLoadingRemoveSectionWidget && (
+                                            <LPBButton type="submit" mode="primary" className="w-full flex items-center">
+                                                {isLoadingUpdateSectionWidget ? (
+                                                    <LPBSpinner mode="white" className="text-2xl mx-auto" />
+                                                ) : (
+                                                    <p className="mx-auto">Update</p>
+                                                )}
+                                            </LPBButton>
+                                        )}
 
-                                        {!isLoadingUpdateSectionWidget && (
+                                        {!isLoadingUpdateSectionWidget && !isLoadingRemoveSectionWidget && (
                                             <LPBButton
                                                 type="button"
                                                 mode="error"
@@ -898,6 +897,16 @@ const SidebarBuilder = (props: React.HTMLProps<HTMLDivElement>) => {
                                                 onClick={() => setIsUpdateSectionWidgetShown(false)}
                                             >
                                                 Cancel
+                                            </LPBButton>
+                                        )}
+
+                                        {!isLoadingUpdateSection && (
+                                            <LPBButton type="button" mode="error" className="w-full flex items-center" onClick={removeSectionWidget}>
+                                                {isLoadingRemoveSectionWidget ? (
+                                                    <LPBSpinner mode="white" className="text-2xl mx-auto" />
+                                                ) : (
+                                                    <p className="mx-auto">Remove</p>
+                                                )}
                                             </LPBButton>
                                         )}
                                     </form>

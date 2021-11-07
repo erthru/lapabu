@@ -106,7 +106,7 @@ export const addWidget = async (
         imageUrl,
         carouselUrls,
         videoUrl,
-        mapLocation,
+        mapLocation: mapLocation?.lat === undefined || mapLocation.lng === undefined ? undefined : mapLocation,
     } as any;
 
     Object.keys(sectionWidget).map((key) => (sectionWidget[key] === undefined ? delete sectionWidget[key] : {}));
@@ -167,11 +167,27 @@ export const updateWidget = async (
         }
     });
 
-    console.log(newSectionWidgets);
-
     await setDoc(doc(getFirestore(), SECTIONS_COLLECTION_NAME, sectionId), {
         ...currentSectionDoc.data(),
         widgets: newSectionWidgets,
+    });
+
+    const updatedSectionDoc = await getDoc(doc(getFirestore(), SECTIONS_COLLECTION_NAME, currentSectionDoc.id));
+
+    return {
+        ...(updatedSectionDoc.data() as Section),
+        id: updatedSectionDoc.id,
+    };
+};
+
+export const removeWidget = async (code: string, sectionId: string): Promise<Section> => {
+    const currentSectionDoc = await getDoc(doc(getFirestore(), SECTIONS_COLLECTION_NAME, sectionId));
+    const currentSectionWidgets = currentSectionDoc.data()?.widgets;
+    const filteredSectionWidgets = currentSectionWidgets.filter((widget: any) => widget.code !== code);
+
+    await setDoc(doc(getFirestore(), SECTIONS_COLLECTION_NAME, sectionId), {
+        ...currentSectionDoc.data(),
+        widgets: filteredSectionWidgets,
     });
 
     const updatedSectionDoc = await getDoc(doc(getFirestore(), SECTIONS_COLLECTION_NAME, currentSectionDoc.id));
