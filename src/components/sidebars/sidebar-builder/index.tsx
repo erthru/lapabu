@@ -122,9 +122,10 @@ const SidebarBuilder = (props: React.HTMLProps<HTMLDivElement>) => {
     const removeSection = async () => {
         setIsLoadingRemoveSection(true);
         await sectionService.remove(selectedSection?.id!!);
+        setIsLoadingRemoveSection(false);
+        setIsUpdateSectionShown(false);
         setSelectedSection(undefined);
         getSections();
-        setIsLoadingRemoveSection(false);
     };
 
     const addSectionWidgetPrepare = () => {
@@ -413,17 +414,29 @@ const SidebarBuilder = (props: React.HTMLProps<HTMLDivElement>) => {
                                     required
                                 />
 
-                                <LPBButton type="submit" mode="primary" className="w-full flex items-center">
-                                    {isLoadingUpdateSection ? (
-                                        <LPBSpinner mode="white" className="text-2xl mx-auto" />
-                                    ) : (
-                                        <p className="mx-auto">Update</p>
-                                    )}
-                                </LPBButton>
+                                {!isLoadingRemoveSection && (
+                                    <LPBButton type="submit" mode="primary" className="w-full flex items-center">
+                                        {isLoadingUpdateSection ? (
+                                            <LPBSpinner mode="white" className="text-2xl mx-auto" />
+                                        ) : (
+                                            <p className="mx-auto">Update</p>
+                                        )}
+                                    </LPBButton>
+                                )}
 
-                                {!isLoadingUpdateSection && (
+                                {!isLoadingUpdateSection && !isLoadingRemoveSection && (
                                     <LPBButton mode="error" className="w-full" onClick={() => setIsUpdateSectionShown(false)}>
                                         Cancel
+                                    </LPBButton>
+                                )}
+
+                                {!isLoadingUpdateSection && (
+                                    <LPBButton type="button" mode="error" className="w-full flex items-center" onClick={removeSection}>
+                                        {isLoadingRemoveSection ? (
+                                            <LPBSpinner mode="white" className="text-2xl mx-auto" />
+                                        ) : (
+                                            <p className="mx-auto">Remove</p>
+                                        )}
                                     </LPBButton>
                                 )}
                             </form>
@@ -898,20 +911,6 @@ const SidebarBuilder = (props: React.HTMLProps<HTMLDivElement>) => {
                                         >
                                             <AiOutlinePlus />
                                             <p className="ml-2">Add Widget</p>
-                                        </div>
-
-                                        <div
-                                            className="w-full bg-error text-white font-medium p-2 mt-3 flex items-center cursor-pointer"
-                                            onClick={removeSection}
-                                        >
-                                            {isLoadingRemoveSection ? (
-                                                <LPBSpinner mode="white" className="text-2xl mx-auto" />
-                                            ) : (
-                                                <div className="w-full flex items-center">
-                                                    <BiTrash className="text-lg" />
-                                                    <p className="ml-2">Delete This Section</p>
-                                                </div>
-                                            )}
                                         </div>
                                     </div>
                                 )}
