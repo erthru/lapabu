@@ -15,13 +15,12 @@ export type SectionWidget = {
     position: "left" | "center" | "right";
     textValue?: string;
     navigationItems?: SectionWidgetNavigationItem[];
-    isNavigationWithSearch?: boolean;
     imageUrl?: string;
     carouselUrls?: string[];
     videoUrl?: string;
     mapLocation?: {
-        lat: string;
-        lng: string;
+        lat?: string;
+        lng?: string;
     };
 };
 

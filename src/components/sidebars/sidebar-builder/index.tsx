@@ -26,26 +26,26 @@ const SidebarBuilder = (props: React.HTMLProps<HTMLDivElement>) => {
     const [previewAs, setPreviewAs] = useState<"desktop" | "tablet" | "mobile">("desktop");
     const [selectedSection, setSelectedSection] = useState<Section>();
     const [isAddSectionShown, setIsAddSectionShown] = useState(false);
-    const [sectionName, setSectionName] = useState("");
+    const [sectionName, setSectionName] = useState<string>();
     const [sectionHeight, setSectionHeight] = useState<"auto" | string>("auto");
     const [sectionJustifyContent, setSectionJustifyContent] = useState<"top" | "center" | "bottom">("top");
-    const [sectionBgColor, setSectionBgColor] = useState("");
+    const [sectionBgColor, setSectionBgColor] = useState<string>();
     const [sectionWidgets, setSectionWidgets] = useState<SectionWidget[]>();
     const [sectionWidgetType, setSectionWidgetType] = useState<"text" | "navigation" | "image" | "carousel" | "video" | "map">("text");
     const [sectionWidgetPosition, setSectionWidgetPosition] = useState<"left" | "center" | "right">("left");
     const [sectionWidgetWidth, setSectionWidgetWidth] = useState<"1/3" | "1/2" | "2/3" | "full">("1/3");
-    const [sectionWidgetTextValue, setSectionWidgetTextValue] = useState("");
+    const [sectionWidgetTextValue, setSectionWidgetTextValue] = useState<string>();
     const [sectionWidgetNavigationItems, setSectionWidgetNavigationItems] = useState<SectionWidgetNavigationItem[]>();
-    const [sectionWidgetNavigationItemName, setSectionWidgetNavigationItemName] = useState("");
-    const [sectionWidgetNavigationItemUrl, setSectionWidgetNavigationItemUrl] = useState("");
+    const [sectionWidgetNavigationItemName, setSectionWidgetNavigationItemName] = useState<string>();
+    const [sectionWidgetNavigationItemUrl, setSectionWidgetNavigationItemUrl] = useState<string>();
     const [isNavigationWithSearch, setIsNavigationWithSearch] = useState<boolean>();
-    const [sectionWidgetImageUrl, setSectionWidgetImageUrl] = useState("");
+    const [sectionWidgetImageUrl, setSectionWidgetImageUrl] = useState<string>();
     const [sectionWidgetCarouselUrls, setSectionWidgetCarouselUrls] = useState<string[]>();
-    const [sectionWidgetCarouselUrl, setSectionWidgetCarouselUrl] = useState("");
-    const [sectionWidgetVideoUrl, setSectionWidgetVideoUrl] = useState("");
+    const [sectionWidgetCarouselUrl, setSectionWidgetCarouselUrl] = useState<string>();
+    const [sectionWidgetVideoUrl, setSectionWidgetVideoUrl] = useState<string>();
     const [sectionWidgetMapLocation, setSectionWidgetMapLocation] = useState<{}>();
-    const [sectionWidgetMapLocationLat, setSectionWidgetMapLocationLat] = useState("");
-    const [sectioNWdigetMapLocationLng, setSectionWidgetMapLocationLng] = useState("");
+    const [sectionWidgetMapLocationLat, setSectionWidgetMapLocationLat] = useState<string>();
+    const [sectioNWdigetMapLocationLng, setSectionWidgetMapLocationLng] = useState<string>();
     const [isSectionWidgetNavigationItemFieldEmpty, setIsSectionWidgetNavigationItemFieldEmpty] = useState(false);
     const [isSectionWidgetCarouselUrlFieldEmpty, setIsSectionWidgetCarouselUrlFieldEmpty] = useState(false);
     const [sections, setSections] = useState<Section[]>();
@@ -84,7 +84,7 @@ const SidebarBuilder = (props: React.HTMLProps<HTMLDivElement>) => {
         e.preventDefault();
         setIsLoadingAddSection(true);
         const user = await userService.getProfile();
-        await sectionService.add(sectionName, sectionHeight, sectionJustifyContent, sectionBgColor, user?.id!!);
+        await sectionService.add(sectionName!!, sectionHeight, sectionJustifyContent, sectionBgColor!!, user?.id!!);
         setIsLoadingAddSection(false);
         setIsAddSectionShown(false);
         getSections();
@@ -93,7 +93,13 @@ const SidebarBuilder = (props: React.HTMLProps<HTMLDivElement>) => {
     const updateSection = async (e: FormEvent) => {
         e.preventDefault();
         setIsLoadingUpdateSection(true);
-        const updatedSection = await sectionService.update(selectedSection?.id!!, sectionName, sectionHeight, sectionJustifyContent, sectionBgColor);
+        const updatedSection = await sectionService.update(
+            selectedSection?.id!!,
+            sectionName!!,
+            sectionHeight,
+            sectionJustifyContent,
+            sectionBgColor!!
+        );
         setIsLoadingUpdateSection(false);
         setIsUpdateSectionShown(false);
         setSelectedSection(updatedSection);
@@ -111,6 +117,33 @@ const SidebarBuilder = (props: React.HTMLProps<HTMLDivElement>) => {
     const addSectionWidget = async (e: FormEvent) => {
         e.preventDefault();
         setIsLoadingAddSectionWidget(true);
+
+        const updatedSection = await sectionService.addWidget(
+            sectionWidgetType,
+            sectionWidgetWidth,
+            sectionWidgetPosition,
+            selectedSection?.id!!,
+            sectionWidgetTextValue,
+            sectionWidgetNavigationItems,
+            sectionWidgetImageUrl,
+            sectionWidgetCarouselUrls,
+            sectionWidgetVideoUrl,
+            sectionWidgetMapLocation
+        );
+
+        setIsLoadingAddSectionWidget(false);
+        setIsAddSectionWidgetShown(false);
+        setSelectedSection(updatedSection);
+        getSections();
+        setSectionWidgetType("text");
+        setSectionWidgetWidth("1/3");
+        setSectionWidgetPosition("left");
+        setSectionWidgetTextValue(undefined);
+        setSectionWidgetNavigationItems(undefined);
+        setSectionWidgetImageUrl(undefined);
+        setSectionWidgetCarouselUrls(undefined);
+        setSectionWidgetVideoUrl(undefined);
+        setSectionWidgetMapLocation(undefined);
     };
 
     const addSectionWidgetNavigationItems = () => {
@@ -121,8 +154,8 @@ const SidebarBuilder = (props: React.HTMLProps<HTMLDivElement>) => {
             const sectionWidgetNavigationItemsTemp = sectionWidgetNavigationItems !== undefined ? [...sectionWidgetNavigationItems] : [];
 
             sectionWidgetNavigationItemsTemp.push({
-                name: sectionWidgetNavigationItemName,
-                url: sectionWidgetNavigationItemUrl,
+                name: sectionWidgetNavigationItemName!!,
+                url: sectionWidgetNavigationItemUrl!!,
             });
 
             setSectionWidgetNavigationItems(sectionWidgetNavigationItemsTemp);
@@ -137,7 +170,7 @@ const SidebarBuilder = (props: React.HTMLProps<HTMLDivElement>) => {
         if (sectionWidgetCarouselUrl === "") setIsSectionWidgetCarouselUrlFieldEmpty(true);
         else {
             const sectionWidgetCarouselUrlsTemp = sectionWidgetCarouselUrls !== undefined ? [...sectionWidgetCarouselUrls] : [];
-            sectionWidgetCarouselUrlsTemp.push(sectionWidgetCarouselUrl);
+            sectionWidgetCarouselUrlsTemp.push(sectionWidgetCarouselUrl!!);
             setSectionWidgetCarouselUrls(sectionWidgetCarouselUrlsTemp);
             setSectionWidgetCarouselUrl("");
         }

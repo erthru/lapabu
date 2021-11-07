@@ -1,5 +1,5 @@
 import { collection, query, getFirestore, getDocs, where, setDoc, doc, getDoc, addDoc, deleteDoc, orderBy, limit } from "firebase/firestore";
-import Section from "../data/entities/section";
+import Section, { SectionWidgetNavigationItem } from "../data/entities/section";
 
 const SECTIONS_COLLECTION_NAME = "sections";
 
@@ -73,3 +73,55 @@ export const update = async (
 };
 
 export const remove = async (id: string) => await deleteDoc(doc(getFirestore(), SECTIONS_COLLECTION_NAME, id));
+
+export const addWidget = async (
+    type: "text" | "navigation" | "image" | "carousel" | "video" | "map",
+    width: "1/3" | "1/2" | "2/3" | "full",
+    position: "left" | "center" | "right",
+    sectionId: string,
+    textValue?: string,
+    navigationItems?: SectionWidgetNavigationItem[],
+    imageUrl?: string,
+    carouselUrls?: string[],
+    videoUrl?: string,
+    mapLocation?: {
+        lat?: string;
+        lng?: string;
+    }
+): Promise<Section> => {
+    const currentSectionDoc = await getDoc(doc(getFirestore(), SECTIONS_COLLECTION_NAME, sectionId));
+    const currentSectionWidgets = currentSectionDoc.data()?.widgets === undefined ? [] : currentSectionDoc.data()!!.widgets;
+
+    const addedDummyData = await addDoc(collection(getFirestore(), "dummies"), {
+        dummy: "dummy",
+    });
+
+    const sectionWidget = {
+        code: addedDummyData.id,
+        type,
+        width,
+        position,
+        textValue,
+        navigationItems,
+        imageUrl,
+        carouselUrls,
+        videoUrl,
+        mapLocation,
+    } as any;
+
+    Object.keys(sectionWidget).map((key) => (sectionWidget[key] === undefined ? delete sectionWidget[key] : {}));
+    currentSectionWidgets.push(sectionWidget);
+    await deleteDoc(doc(getFirestore(), "dummies", addedDummyData.id));
+
+    await setDoc(doc(getFirestore(), SECTIONS_COLLECTION_NAME, sectionId), {
+        ...currentSectionDoc.data(),
+        widgets: currentSectionWidgets,
+    });
+
+    const updatedSectionDoc = await getDoc(doc(getFirestore(), SECTIONS_COLLECTION_NAME, currentSectionDoc.id));
+
+    return {
+        ...(updatedSectionDoc.data() as Section),
+        id: updatedSectionDoc.id,
+    };
+};
