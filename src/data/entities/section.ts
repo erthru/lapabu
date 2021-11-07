@@ -10,6 +10,7 @@ type Section = {
 };
 
 export type SectionWidget = {
+    code: string;
     type: "text" | "navigation" | "image" | "carousel" | "video" | "map";
     width: "1/3" | "1/2" | "2/3" | "full";
     position: "left" | "center" | "right";
