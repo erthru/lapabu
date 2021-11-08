@@ -82,12 +82,6 @@ export const addWidget = async (
     textValue?: string,
     navigationItems?: SectionWidgetNavigationItem[],
     imageUrl?: string,
-    carouselUrls?: string[],
-    videoUrl?: string,
-    mapLocation?: {
-        lat?: string;
-        lng?: string;
-    }
 ): Promise<Section> => {
     const currentSectionDoc = await getDoc(doc(getFirestore(), SECTIONS_COLLECTION_NAME, sectionId));
     const currentSectionWidgets = currentSectionDoc.data()?.widgets === undefined ? [] : currentSectionDoc.data()!!.widgets;
@@ -104,9 +98,6 @@ export const addWidget = async (
         textValue,
         navigationItems,
         imageUrl,
-        carouselUrls,
-        videoUrl,
-        mapLocation: mapLocation?.lat === undefined || mapLocation.lng === undefined ? undefined : mapLocation,
     } as any;
 
     Object.keys(sectionWidget).map((key) => (sectionWidget[key] === undefined ? delete sectionWidget[key] : {}));
@@ -135,12 +126,6 @@ export const updateWidget = async (
     textValue?: string,
     navigationItems?: SectionWidgetNavigationItem[],
     imageUrl?: string,
-    carouselUrls?: string[],
-    videoUrl?: string,
-    mapLocation?: {
-        lat?: string;
-        lng?: string;
-    }
 ): Promise<Section> => {
     const currentSectionDoc = await getDoc(doc(getFirestore(), SECTIONS_COLLECTION_NAME, sectionId));
     const currentSectionWidgets = currentSectionDoc.data()?.widgets;
@@ -157,9 +142,6 @@ export const updateWidget = async (
                 textValue,
                 navigationItems,
                 imageUrl,
-                carouselUrls,
-                videoUrl,
-                mapLocation: mapLocation?.lat === undefined || mapLocation.lng === undefined ? undefined : mapLocation,
             } as any;
 
             Object.keys(sectionWidget).map((key) => (sectionWidget[key] === undefined ? delete sectionWidget[key] : {}));

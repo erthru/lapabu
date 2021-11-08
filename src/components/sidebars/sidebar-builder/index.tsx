@@ -11,7 +11,7 @@ import {
     AiOutlineClose,
 } from "react-icons/ai";
 import { HiOutlinePencilAlt } from "react-icons/hi";
-import { BiCarousel, BiImage, BiMap, BiNavigation, BiTrash } from "react-icons/bi";
+import { BiImage, BiNavigation } from "react-icons/bi";
 import Section, { SectionWidget, SectionWidgetNavigationItem } from "../../../data/entities/section";
 import LPBButton from "../../commons/lpb-button";
 import LPBInput from "../../commons/lpb-input";
@@ -30,7 +30,7 @@ const SidebarBuilder = (props: React.HTMLProps<HTMLDivElement>) => {
     const [sectionHeight, setSectionHeight] = useState<"auto" | string>("auto");
     const [sectionJustifyContent, setSectionJustifyContent] = useState<"top" | "center" | "bottom">("top");
     const [sectionBgColor, setSectionBgColor] = useState<string>();
-    const [sectionWidgetType, setSectionWidgetType] = useState<"text" | "navigation" | "image" | "carousel" | "video" | "map">("text");
+    const [sectionWidgetType, setSectionWidgetType] = useState<"text" | "navigation" | "image">("text");
     const [sectionWidgetPosition, setSectionWidgetPosition] = useState<"left" | "center" | "right">("left");
     const [sectionWidgetWidth, setSectionWidgetWidth] = useState<"1/3" | "1/2" | "2/3" | "full">("1/3");
     const [sectionWidgetTextValue, setSectionWidgetTextValue] = useState<string>();
@@ -38,13 +38,7 @@ const SidebarBuilder = (props: React.HTMLProps<HTMLDivElement>) => {
     const [sectionWidgetNavigationItemName, setSectionWidgetNavigationItemName] = useState<string>();
     const [sectionWidgetNavigationItemUrl, setSectionWidgetNavigationItemUrl] = useState<string>();
     const [sectionWidgetImageUrl, setSectionWidgetImageUrl] = useState<string>();
-    const [sectionWidgetCarouselUrls, setSectionWidgetCarouselUrls] = useState<string[]>();
-    const [sectionWidgetCarouselUrl, setSectionWidgetCarouselUrl] = useState<string>();
-    const [sectionWidgetVideoUrl, setSectionWidgetVideoUrl] = useState<string>();
-    const [sectionWidgetMapLocationLat, setSectionWidgetMapLocationLat] = useState<string>();
-    const [sectionWidgetMapLocationLng, setSectionWidgetMapLocationLng] = useState<string>();
     const [isSectionWidgetNavigationItemFieldEmpty, setIsSectionWidgetNavigationItemFieldEmpty] = useState(false);
-    const [isSectionWidgetCarouselUrlFieldEmpty, setIsSectionWidgetCarouselUrlFieldEmpty] = useState(false);
     const [sections, setSections] = useState<Section[]>();
     const [isLoadingLogout, setIsLoadingLogout] = useState(false);
     const [isLoadingAddSection, setIsLoadingAddSection] = useState(false);
@@ -80,10 +74,6 @@ const SidebarBuilder = (props: React.HTMLProps<HTMLDivElement>) => {
             setSectionWidgetTextValue(selectedSectionWidget.textValue);
             setSectionWidgetNavigationItems(selectedSectionWidget.navigationItems);
             setSectionWidgetImageUrl(selectedSectionWidget.imageUrl);
-            setSectionWidgetCarouselUrls(selectedSectionWidget.carouselUrls);
-            setSectionWidgetVideoUrl(selectedSectionWidget.videoUrl);
-            setSectionWidgetMapLocationLat(selectedSectionWidget.mapLocation?.lat);
-            setSectionWidgetMapLocationLng(selectedSectionWidget.mapLocation?.lng);
         }
     }, [selectedSection, selectedSectionWidget]);
 
@@ -145,13 +135,7 @@ const SidebarBuilder = (props: React.HTMLProps<HTMLDivElement>) => {
             selectedSection?.id!!,
             sectionWidgetTextValue,
             sectionWidgetNavigationItems,
-            sectionWidgetImageUrl,
-            sectionWidgetCarouselUrls,
-            sectionWidgetVideoUrl,
-            {
-                lat: sectionWidgetMapLocationLat,
-                lng: sectionWidgetMapLocationLng,
-            }
+            sectionWidgetImageUrl
         );
 
         setIsLoadingAddSectionWidget(false);
@@ -173,13 +157,7 @@ const SidebarBuilder = (props: React.HTMLProps<HTMLDivElement>) => {
             selectedSection?.id!!,
             sectionWidgetTextValue,
             sectionWidgetNavigationItems,
-            sectionWidgetImageUrl,
-            sectionWidgetCarouselUrls,
-            sectionWidgetVideoUrl,
-            {
-                lat: sectionWidgetMapLocationLat,
-                lng: sectionWidgetMapLocationLng,
-            }
+            sectionWidgetImageUrl
         );
 
         setIsLoadingUpdateSectionWidget(false);
@@ -217,23 +195,8 @@ const SidebarBuilder = (props: React.HTMLProps<HTMLDivElement>) => {
         }
     };
 
-    const addSectionWidgetCarouselUrls = () => {
-        setIsSectionWidgetCarouselUrlFieldEmpty(false);
-
-        if (sectionWidgetCarouselUrl === "") setIsSectionWidgetCarouselUrlFieldEmpty(true);
-        else {
-            const sectionWidgetCarouselUrlsTemp = sectionWidgetCarouselUrls !== undefined ? [...sectionWidgetCarouselUrls] : [];
-            sectionWidgetCarouselUrlsTemp.push(sectionWidgetCarouselUrl!!);
-            setSectionWidgetCarouselUrls(sectionWidgetCarouselUrlsTemp);
-            setSectionWidgetCarouselUrl("");
-        }
-    };
-
     const removeSectionWidgetNavigationItem = (item: SectionWidgetNavigationItem) =>
         setSectionWidgetNavigationItems(sectionWidgetNavigationItems?.filter((_item) => _item !== item));
-
-    const removeSectionWidgetCarouselUrls = (item: string) =>
-        setSectionWidgetCarouselUrls(sectionWidgetCarouselUrls?.filter((_item) => _item !== item));
 
     const showSelectedSectionWidget = (sectionWidget: SectionWidget) => {
         setIsUpdateSectionWidgetShown(true);
@@ -247,10 +210,6 @@ const SidebarBuilder = (props: React.HTMLProps<HTMLDivElement>) => {
         setSectionWidgetTextValue(undefined);
         setSectionWidgetNavigationItems(undefined);
         setSectionWidgetImageUrl(undefined);
-        setSectionWidgetCarouselUrls(undefined);
-        setSectionWidgetVideoUrl(undefined);
-        setSectionWidgetMapLocationLat(undefined);
-        setSectionWidgetMapLocationLng(undefined);
     };
 
     const logout = async () => {
@@ -451,11 +410,8 @@ const SidebarBuilder = (props: React.HTMLProps<HTMLDivElement>) => {
                                                     onClick={() => showSelectedSectionWidget(selectedSection.widgets[i])}
                                                 >
                                                     {widget.type === "text" && <AiOutlineFontColors />}
-                                                    {widget.type === "carousel" && <BiCarousel />}
                                                     {widget.type === "image" && <BiImage />}
-                                                    {widget.type === "map" && <BiMap />}
                                                     {widget.type === "navigation" && <BiNavigation />}
-                                                    {widget.type === "video" && <AiOutlineVideoCamera />}
                                                     <p className="ml-2 capitalize">{widget.type}</p>
                                                 </div>
                                             ))}
@@ -478,18 +434,6 @@ const SidebarBuilder = (props: React.HTMLProps<HTMLDivElement>) => {
                                                 {
                                                     text: "Image",
                                                     value: "image",
-                                                },
-                                                {
-                                                    text: "Carousel",
-                                                    value: "carousel",
-                                                },
-                                                {
-                                                    text: "Video",
-                                                    value: "video",
-                                                },
-                                                {
-                                                    text: "Map",
-                                                    value: "map",
                                                 },
                                             ]}
                                             selectedValue={(val) => setSectionWidgetType(val as any)}
@@ -597,65 +541,6 @@ const SidebarBuilder = (props: React.HTMLProps<HTMLDivElement>) => {
                                             />
                                         )}
 
-                                        {sectionWidgetType === "carousel" && (
-                                            <div className="w-full space-y-3">
-                                                <LPBInput
-                                                    label="Image URL"
-                                                    placeholder="Input Image URL"
-                                                    onChange={(e) => setSectionWidgetCarouselUrl(e.currentTarget.value)}
-                                                    value={sectionWidgetCarouselUrl}
-                                                />
-
-                                                {isSectionWidgetCarouselUrlFieldEmpty && <LPBAlert mode="error">Image URL Cannot be Empty</LPBAlert>}
-
-                                                <LPBButton type="button" mode="primary" className="w-full" onClick={addSectionWidgetCarouselUrls}>
-                                                    Add Carousel
-                                                </LPBButton>
-
-                                                <div className="w-full space-y-3">
-                                                    {sectionWidgetCarouselUrls !== undefined &&
-                                                        sectionWidgetCarouselUrls.length > 0 &&
-                                                        sectionWidgetCarouselUrls.map((item, i) => (
-                                                            <div className="bg-gray-400 text-white p-2 w-full flex items-center">
-                                                                <p className="text-center pl-4 w-full">Image {i + 1}</p>
-
-                                                                <AiOutlineClose
-                                                                    className="ml-auto text-lg text-error cursor-pointer"
-                                                                    onClick={() => removeSectionWidgetCarouselUrls(item)}
-                                                                />
-                                                            </div>
-                                                        ))}
-                                                </div>
-                                            </div>
-                                        )}
-
-                                        {sectionWidgetType === "video" && (
-                                            <LPBInput
-                                                label="Video URL"
-                                                placeholder="Input Video URL"
-                                                onChange={(e) => setSectionWidgetVideoUrl(e.currentTarget.value)}
-                                                required
-                                            />
-                                        )}
-
-                                        {sectionWidgetType === "map" && (
-                                            <div className="w-full space-y-3">
-                                                <LPBInput
-                                                    label="Location Latitude"
-                                                    placeholder="Input Location Latitude"
-                                                    onChange={(e) => setSectionWidgetMapLocationLat(e.currentTarget.value)}
-                                                    required
-                                                />
-
-                                                <LPBInput
-                                                    label="Location Longitude"
-                                                    placeholder="Input Location Longitude"
-                                                    onChange={(e) => setSectionWidgetMapLocationLng(e.currentTarget.value)}
-                                                    required
-                                                />
-                                            </div>
-                                        )}
-
                                         <LPBButton type="submit" mode="primary" className="w-full flex items-center">
                                             {isLoadingAddSectionWidget ? (
                                                 <LPBSpinner mode="white" className="text-2xl mx-auto" />
@@ -693,18 +578,6 @@ const SidebarBuilder = (props: React.HTMLProps<HTMLDivElement>) => {
                                                 {
                                                     text: "Image",
                                                     value: "image",
-                                                },
-                                                {
-                                                    text: "Carousel",
-                                                    value: "carousel",
-                                                },
-                                                {
-                                                    text: "Video",
-                                                    value: "video",
-                                                },
-                                                {
-                                                    text: "Map",
-                                                    value: "map",
                                                 },
                                             ]}
                                             selectedValue={(val) => setSectionWidgetType(val as any)}
@@ -817,68 +690,6 @@ const SidebarBuilder = (props: React.HTMLProps<HTMLDivElement>) => {
                                             />
                                         )}
 
-                                        {sectionWidgetType === "carousel" && (
-                                            <div className="w-full space-y-3">
-                                                <LPBInput
-                                                    label="Image URL"
-                                                    placeholder="Input Image URL"
-                                                    onChange={(e) => setSectionWidgetCarouselUrl(e.currentTarget.value)}
-                                                    value={sectionWidgetCarouselUrl}
-                                                />
-
-                                                {isSectionWidgetCarouselUrlFieldEmpty && <LPBAlert mode="error">Image URL Cannot be Empty</LPBAlert>}
-
-                                                <LPBButton type="button" mode="primary" className="w-full" onClick={addSectionWidgetCarouselUrls}>
-                                                    Add Carousel
-                                                </LPBButton>
-
-                                                <div className="w-full space-y-3">
-                                                    {sectionWidgetCarouselUrls !== undefined &&
-                                                        sectionWidgetCarouselUrls.length > 0 &&
-                                                        sectionWidgetCarouselUrls.map((item, i) => (
-                                                            <div className="bg-gray-400 text-white p-2 w-full flex items-center">
-                                                                <p className="text-center pl-4 w-full">Image {i + 1}</p>
-
-                                                                <AiOutlineClose
-                                                                    className="ml-auto text-lg text-error cursor-pointer"
-                                                                    onClick={() => removeSectionWidgetCarouselUrls(item)}
-                                                                />
-                                                            </div>
-                                                        ))}
-                                                </div>
-                                            </div>
-                                        )}
-
-                                        {sectionWidgetType === "video" && (
-                                            <LPBInput
-                                                label="Video URL"
-                                                placeholder="Input Video URL"
-                                                onChange={(e) => setSectionWidgetVideoUrl(e.currentTarget.value)}
-                                                value={sectionWidgetVideoUrl}
-                                                required
-                                            />
-                                        )}
-
-                                        {sectionWidgetType === "map" && (
-                                            <div className="w-full space-y-3">
-                                                <LPBInput
-                                                    label="Location Latitude"
-                                                    placeholder="Input Location Latitude"
-                                                    onChange={(e) => setSectionWidgetMapLocationLat(e.currentTarget.value)}
-                                                    value={sectionWidgetMapLocationLat}
-                                                    required
-                                                />
-
-                                                <LPBInput
-                                                    label="Location Longitude"
-                                                    placeholder="Input Location Longitude"
-                                                    onChange={(e) => setSectionWidgetMapLocationLng(e.currentTarget.value)}
-                                                    value={sectionWidgetMapLocationLng}
-                                                    required
-                                                />
-                                            </div>
-                                        )}
-
                                         {!isLoadingRemoveSectionWidget && (
                                             <LPBButton type="submit" mode="primary" className="w-full flex items-center">
                                                 {isLoadingUpdateSectionWidget ? (
@@ -900,7 +711,7 @@ const SidebarBuilder = (props: React.HTMLProps<HTMLDivElement>) => {
                                             </LPBButton>
                                         )}
 
-                                        {!isLoadingUpdateSection && (
+                                        {!isLoadingUpdateSectionWidget && (
                                             <LPBButton type="button" mode="error" className="w-full flex items-center" onClick={removeSectionWidget}>
                                                 {isLoadingRemoveSectionWidget ? (
                                                     <LPBSpinner mode="white" className="text-2xl mx-auto" />
